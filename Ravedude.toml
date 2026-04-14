@@ -1,0 +1,6 @@
+[general]
+# board = "nano"
+# serial-baudrate = 115200  # Если не сработает, попробуй 115200
+# serial-port = "/dev/ttyUSB0"
+# output-mode = "ascii"
+#avrdude -c arduino -p m328p -P /dev/ttyUSB* -b 115200 -U flash:w:${PROJECT_NAME}.hex:i
