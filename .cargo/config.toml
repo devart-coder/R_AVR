@@ -6,7 +6,7 @@ json-target-spec = true
 target = ".cargo/avr-atmel-atmega328p.json" # Или используйте встроенный, если он есть в nightly
 
 [target.avr-atmel-atmega328p]
-runner = ".cargo/deploy.sh" # Райвдуд сам прошьет после cargo run
+#runner = ".cargo/deploy.sh" # Райвдуд сам прошьет после cargo run
 linker = ".cargo/avr_sh.sh"
 # Добавляем target-cpu здесь, чтобы LLVM не паниковал
 rustflags = [
