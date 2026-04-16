@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 18.0.0, 2026-04-14T22:20:47. -->
+<!-- Written by QtCreator 18.0.0, 2026-04-16T13:19:24. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -112,20 +112,34 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
      </valuemap>
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.1">
-      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
-      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"> target/avr-atmel-atmega328p/debug/AVR</value>
-      <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-size</value>
-      <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
-     </valuemap>
-     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.2">
-      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">false</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"> -O ihex -R .eeprom target/avr-atmel-atmega328p/debug/AVR</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-objcopy</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
      </valuemap>
-     <value type="qlonglong" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
+     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.2">
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">false</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"> target/avr-atmel-atmega328p/debug/AVR</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-size</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
+     </valuemap>
+     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.3">
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments">-I elf32-avr -O ihex -R .eeprom -R .fuse -R .lock -R .signature target/avr-atmel-atmega328p/debug/AVR target/avr-atmel-atmega328p/debug/AVR.hex</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-objcopy</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
+     </valuemap>
+     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.4">
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments">target/avr-atmel-atmega328p/debug/AVR.hex</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-size</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
+     </valuemap>
+     <value type="qlonglong" key="ProjectExplorer.BuildStepList.StepsCount">5</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Build</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Build</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.BuildSteps.Build</value>
@@ -149,7 +163,7 @@
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
       <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
        <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
-       <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"> -p atmega328p -c arduino -b 115200 -P /dev/ttyUSB0 -U flash:w:target/avr-atmel-atmega328p/release/AVR</value>
+       <value type="QString" key="ProjectExplorer.ProcessStep.Arguments">-p atmega328p -c arduino -b 115200 -P /dev/ttyUSB0 -U flash:w:target/avr-atmel-atmega328p/debug/AVR</value>
        <value type="QString" key="ProjectExplorer.ProcessStep.Command">avrdude</value>
        <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
        <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
@@ -180,8 +194,8 @@
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.CustomExecutableRunConfiguration</value>
      <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey"></value>
      <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
-     <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId">{f35c31d6-70f4-4a2c-895a-b415180da71e}</value>
-     <value type="QString" key="RunConfiguration.Arguments">-p atmega328p -c arduino -P /dev/ttyUSB0 -b 115200 -U flash:w:/target/avr-atmel-atmega328p/release/AVR</value>
+     <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId">{3509abba-5581-4334-b273-b356eb941b9f}</value>
+     <value type="QString" key="RunConfiguration.Arguments">-p atmega328p -c arduino -b 115200 -P /dev/ttyUSB0 -U flash:w:target/avr-atmel-atmega328p/debug/AVR</value>
      <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
      <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
      <value type="QString" key="RunConfiguration.WorkingDirectory.default">%{RunConfig:Executable:Path}</value>
@@ -224,7 +238,7 @@
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
-      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"> -p atmega328p -c arduino -b 115200 -P /dev/ttyUSB0 -U flash:w:target/avr-atmel-atmega328p/release/AVR</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments">-p atmega328p -c arduino -b 115200 -P /dev/ttyUSB0 -U flash:w:target/avr-atmel-atmega328p/debug/AVR</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Command">avrdude</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
@@ -255,8 +269,8 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.CustomExecutableRunConfiguration</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey"></value>
     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId">{f35c31d6-70f4-4a2c-895a-b415180da71e}</value>
-    <value type="QString" key="RunConfiguration.Arguments">-p atmega328p -c arduino -P /dev/ttyUSB0 -b 115200 -U flash:w:/target/avr-atmel-atmega328p/release/AVR</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.UniqueId">{3509abba-5581-4334-b273-b356eb941b9f}</value>
+    <value type="QString" key="RunConfiguration.Arguments">-p atmega328p -c arduino -b 115200 -P /dev/ttyUSB0 -U flash:w:target/avr-atmel-atmega328p/debug/AVR</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">%{RunConfig:Executable:Path}</value>

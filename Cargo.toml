@@ -1,3 +1,8 @@
+# [workspace]
+# members = [
+    # ".",
+    # "nano",
+# ]
 [package]
 name = "AVR"
 version = "0.1.0"
@@ -12,4 +17,4 @@ panic = "abort"
 lto = true
 opt-level = "s"
 [dependencies]
-no = { path = "./no" }
+nano = { path = "./nano" }

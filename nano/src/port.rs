@@ -1,14 +1,32 @@
 use crate::register::Register;
+enum PortName{
+    B=0x23,
+    C=0x26,
+    D=0x29
+}
 
-pub struct Port {
-    pub ddr:Register,
-    pub port:Register,
-}
-impl Port{
-    pub fn new()->Self{
-        Port{
-            ddr:  Register{ address:0x24 as *mut u8 },
-            port: Register{ address:0x25 as *mut u8 }
+macro_rules! define_port {
+    ($struct_name:ident, $pin:expr) => {
+        #[repr(C)]
+        pub struct $struct_name {
+            pub pin:Register<u8>,
+            pub ddr:Register<u8>,
+            pub port:Register<u8>,
         }
-    }
+        impl $struct_name {
+            pub const fn new() -> Self{
+                Self{
+                    pin: Register::new($pin),
+                    ddr: Register::new($pin+1),
+                    port:Register::new($pin+2),
+                }
+            }
+        }
+    };
 }
+define_port!(PortB, PortName::B as usize);
+define_port!(PortC, PortName::C as usize);
+define_port!(PortD, PortName::D as usize);
+pub const PORTB:PortB = PortB::new();
+pub const PORTC:PortC = PortC::new();
+pub const PORTD:PortD = PortD::new();

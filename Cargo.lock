@@ -6,9 +6,9 @@ version = 4
 name = "AVR"
 version = "0.1.0"
 dependencies = [
- "no",
+ "nano",
 ]
 
 [[package]]
-name = "no"
+name = "nano"
 version = "0.1.0"
