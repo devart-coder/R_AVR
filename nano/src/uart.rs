@@ -66,48 +66,76 @@ pub enum StopBits{
     _2
 }
 //---
-struct Interrupt{
+pub struct Interrupt{
+    ucsr0b: Register<u8>,
+    rx_callback : Option<fn()>,
+    tx_callback : Option<fn()>,
 }
 impl Interrupt{
+    pub const fn new()->Self{
+        Interrupt {
+            ucsr0b: Register::new(UartRegisters::UCSR0B as usize),
+            rx_callback: None,
+            tx_callback: None,
+        }
+    }
+    pub fn set_rx_handle(&mut self, f:fn()){
+        self.rx_callback = Some(f);
+    }
+    pub fn set_tx_handle(&mut self, f:fn()){
+        self.rx_callback = Some(f);
+    }
+    pub fn handle_rx(&self) -> Option<fn()>{
+        self.rx_callback
+    }
+    pub fn handle_tx(&self) -> Option<fn()>{
+        self.tx_callback
+    }
+    pub fn enable_rxi(&self, value:bool ) {
+        if value == true{
+        self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::RXCIE0 as u8)|(1<<Ucsr0bBits::RXEN0 as u8) );
+        }else{
+            self.ucsr0b.modify(|v| v & !((1<<Ucsr0bBits::RXCIE0 as u8)|(1<<Ucsr0bBits::RXEN0 as u8)) );
+        }
+    }
+    pub fn enable_txi(&self, value:bool ) {
+        if value == true{
+        self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::TXCIE0 as u8)|(1<<Ucsr0bBits::TXEN0 as u8) );
+        }else{
+            self.ucsr0b.modify(|v| v & !((1<<Ucsr0bBits::TXCIE0 as u8)|(1<<Ucsr0bBits::TXEN0 as u8)) );
+        }
+    }
 }
 //---
 pub struct Settings{
     ucsr0a:Register<u8>,
-    ucsr0b:Register<u8>,
+    // ucsr0b:Register<u8>,
     ucsr0c:Register<u8>,
     ubrr0h:Register<u8>,
     ubrr0l:Register<u8>,
+    pub interrupt : Interrupt,
 }
 impl Settings{
     pub const fn new()-> Self{
         Settings {
             ucsr0a: Register::new(UartRegisters::UCSR0A as usize),
-            ucsr0b: Register::new(UartRegisters::UCSR0B as usize),
+            // ucsr0b: Register::new(UartRegisters::UCSR0B as usize),
             ucsr0c: Register::new(UartRegisters::UCSR0C as usize),
             ubrr0h: Register::new(UartRegisters::UBRR0H as usize),
             ubrr0l: Register::new(UartRegisters::UBRR0L as usize),
+            interrupt: Interrupt::new(),
         }
     }
 }
-pub trait SettingsTrait{
-    fn double_speed(&self, value:bool);
-    fn package_bits(&self, value: PackageBits);
-    fn parity_mode(&self, value: ParityMode);
-    fn stop_bits(&self, value:StopBits);
-    fn baud_rate(&self, value:BaudRate);
-    fn enable_rxi(&self, value:bool);
-    fn enable_txi(&self, value:bool);
-    fn default(&self);
-}
-impl SettingsTrait for Settings{
-    fn double_speed(&self, value:bool){
+impl Settings{
+    pub fn double_speed(&self, value:bool){
         if value == true {
             self.ucsr0a.modify(|reg| reg|(1<<Ucsr0aBits::U2X0 as u8));
         }else{
             self.ucsr0a.modify(|reg| reg&(1<<Ucsr0aBits::U2X0 as u8));
         }
     }
-    fn package_bits(&self, value: PackageBits){
+    pub fn package_bits(&self, value: PackageBits){
         match value {
             PackageBits::_5 => {
                 self.ucsr0c.modify(|value| value & !((1<<Ucsr0cBits::UCSZ00 as u8)|(1<<Ucsr0cBits::UCSZ01 as u8)))
@@ -126,7 +154,7 @@ impl SettingsTrait for Settings{
             }
         }
     }
-    fn parity_mode(&self, value:ParityMode){
+    pub fn parity_mode(&self, value:ParityMode){
         match value {
             ParityMode::Disabled =>{
                 self.ucsr0c.modify(|value|value&!((1<<Ucsr0cBits::UPM00 as u8)|(1<<Ucsr0cBits::UPM00 as u8)));
@@ -139,7 +167,7 @@ impl SettingsTrait for Settings{
             }
         }
     }
-    fn stop_bits(&self, value:StopBits){
+    pub fn stop_bits(&self, value:StopBits){
         match value {
             StopBits::_1=>{
                 self.ucsr0c.modify(|reg| reg & !(1 << Ucsr0cBits::USBS0 as u8));
@@ -149,9 +177,9 @@ impl SettingsTrait for Settings{
             }
         }
     }
-    fn baud_rate(&self, value:BaudRate){
+    pub fn baud_rate(&self, value:BaudRate){
         //NeedreMake
-        let f_cpu:u32 =16_000_000;
+        const f_cpu:u32 =16_000_000;
         let speed:u32 = match value{
             BaudRate::_115200=>{
                 self.double_speed(true);
@@ -165,30 +193,41 @@ impl SettingsTrait for Settings{
             self.ubrr0h.write((speed>>8)as u8);
             self.ubrr0l.write(speed as u8);
     }
-    fn default(&self){
+    pub fn default(&self){
         self.baud_rate(BaudRate::_9600);
         self.package_bits(PackageBits::_8);
         self.parity_mode(ParityMode::Disabled);
         self.stop_bits(StopBits::_1);
+        self.interrupt.enable_rxi(true);
+        self.interrupt.enable_txi(true);
     }
-    fn enable_rxi(&self, value:bool ) {
-        if value == true{
-            self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::RXCIE0 as u8) );
-        }else{
-            self.ucsr0b.modify(|v| v & !(1<<Ucsr0bBits::RXCIE0 as u8) );
-        }
-    }
-    fn enable_txi(&self, value:bool ) {
-        if value == true{
-            self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::TXCIE0 as u8) );
-        }else{
-            self.ucsr0b.modify(|v| v & !(1<<Ucsr0bBits::TXCIE0 as u8) );
-        }
-    }
+
 }
 //---
 pub struct Output{
-
+    ucsr0a:Register<u8>,
+    udr0:Register<u8>,
+}
+impl Output{
+    pub const fn new()->Self{
+        Output {
+            ucsr0a: Register::new(UartRegisters::UCSR0A as usize),
+            udr0: Register::new(UartRegisters::UDR0 as usize),
+        }
+    }
+    pub fn send_slice(&self, string:&str){
+        for byte in string.as_bytes(){
+            while (self.ucsr0a.read() & (1 << Ucsr0aBits::UDRE0 as u8)) == 0 {}
+            self.udr0.write(*byte);
+        }
+    }
+    pub fn send_bool(&self, value:bool){
+        let string = match value{
+            true => "true",
+            false => "false",
+        };
+        self.send_slice(string);
+    }
 }
 //---
 pub struct Input{
@@ -196,13 +235,16 @@ pub struct Input{
 //---
 pub struct Uart{
     pub settings:Settings,
+    pub interrupt:Interrupt,
     pub out:Output,
     // pub in:Input,
 }
 impl Uart{
     pub const fn new()->Self{
         Uart {
-            settings: Settings::new()
+            settings: Settings::new(),
+            interrupt: Interrupt::new(),
+            out: Output::new(),
         }
     }
 }
