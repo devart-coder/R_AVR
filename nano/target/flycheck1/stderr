@@ -1,7 +1,11 @@
     Blocking waiting for file lock on package cache
     Blocking waiting for file lock on package cache
-   0.047518816s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint: fingerprint error for nano v0.1.0 (/mnt/development/Rust/AVR/nano)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("nano", ["lib"], "/mnt/development/Rust/AVR/nano/src/lib.rs", Edition2024) }
-   0.047532491s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint:     err: failed to read `/mnt/development/Rust/AVR/nano/target/avr-atmel-atmega328p/debug/.fingerprint/nano-9706be5bb3b321e6/lib-nano`
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on shared package cache
+    Blocking waiting for file lock on build directory
+   0.700700888s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint: fingerprint error for nano v0.1.0 (/mnt/development/Rust/AVR/nano)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("nano", ["lib"], "/mnt/development/Rust/AVR/nano/src/lib.rs", Edition2024) }
+   0.700715556s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint:     err: failed to read `/mnt/development/Rust/AVR/nano/target/avr-atmel-atmega328p/debug/.fingerprint/nano-9706be5bb3b321e6/lib-nano`
 
 Caused by:
     No such file or directory (os error 2)
@@ -45,8 +49,8 @@ Stack backtrace:
   25: __libc_start_main_impl
              at ./csu/../csu/libc-start.c:360:3
   26: <unknown>
-   0.068752343s  INFO prepare_target{force=false package_id=compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins) target="compiler_builtins"}: cargo::core::compiler::fingerprint: fingerprint error for compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)/Build/TargetInner { name_inferred: true, tested: false, benched: false, doc: false, doctest: false, ..: lib_target("compiler_builtins", ["lib"], "/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins/src/lib.rs", Edition2024) }
-   0.068765307s  INFO prepare_target{force=false package_id=compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins) target="compiler_builtins"}: cargo::core::compiler::fingerprint:     err: failed to read `/mnt/development/Rust/AVR/nano/target/avr-atmel-atmega328p/debug/.fingerprint/compiler_builtins-78a4dcba58cb223a/lib-compiler_builtins`
+   0.721169562s  INFO prepare_target{force=false package_id=compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins) target="compiler_builtins"}: cargo::core::compiler::fingerprint: fingerprint error for compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)/Build/TargetInner { name_inferred: true, tested: false, benched: false, doc: false, doctest: false, ..: lib_target("compiler_builtins", ["lib"], "/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins/src/lib.rs", Edition2024) }
+   0.721183047s  INFO prepare_target{force=false package_id=compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins) target="compiler_builtins"}: cargo::core::compiler::fingerprint:     err: failed to read `/mnt/development/Rust/AVR/nano/target/avr-atmel-atmega328p/debug/.fingerprint/compiler_builtins-78a4dcba58cb223a/lib-compiler_builtins`
 
 Caused by:
     No such file or directory (os error 2)
@@ -91,8 +95,8 @@ Stack backtrace:
   26: __libc_start_main_impl
              at ./csu/../csu/libc-start.c:360:3
   27: <unknown>
-   0.069135186s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint: fingerprint error for nano v0.1.0 (/mnt/development/Rust/AVR/nano)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("nano", ["lib"], "/mnt/development/Rust/AVR/nano/src/lib.rs", Edition2024) }
-   0.069140927s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint:     err: failed to read `/mnt/development/Rust/AVR/nano/target/avr-atmel-atmega328p/debug/.fingerprint/nano-8aec15695d1bac96/test-lib-nano`
+   0.721565851s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint: fingerprint error for nano v0.1.0 (/mnt/development/Rust/AVR/nano)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("nano", ["lib"], "/mnt/development/Rust/AVR/nano/src/lib.rs", Edition2024) }
+   0.721571351s  INFO prepare_target{force=false package_id=nano v0.1.0 (/mnt/development/Rust/AVR/nano) target="nano"}: cargo::core::compiler::fingerprint:     err: failed to read `/mnt/development/Rust/AVR/nano/target/avr-atmel-atmega328p/debug/.fingerprint/nano-8aec15695d1bac96/test-lib-nano`
 
 Caused by:
     No such file or directory (os error 2)
@@ -138,3 +142,4 @@ Stack backtrace:
   26: <unknown>
    Compiling compiler_builtins v0.1.160 (/home/devart/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
 error: could not compile `compiler_builtins` (lib) due to 1 previous error
+`compiler_builtins` (lib) due to 1 previous error

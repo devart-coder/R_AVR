@@ -66,6 +66,11 @@ pub enum StopBits{
     _2
 }
 //---
+struct Interrupt{
+}
+impl Interrupt{
+}
+//---
 pub struct Settings{
     ucsr0a:Register<u8>,
     ucsr0b:Register<u8>,
@@ -86,10 +91,12 @@ impl Settings{
 }
 pub trait SettingsTrait{
     fn double_speed(&self, value:bool);
-    fn package_bits(&self,value: PackageBits);
-    fn parity_mode(&self,value: ParityMode);
-    fn stop_bits(&self,value:StopBits);
-    fn baud_rate(&self,value:BaudRate);
+    fn package_bits(&self, value: PackageBits);
+    fn parity_mode(&self, value: ParityMode);
+    fn stop_bits(&self, value:StopBits);
+    fn baud_rate(&self, value:BaudRate);
+    fn enable_rxi(&self, value:bool);
+    fn enable_txi(&self, value:bool);
     fn default(&self);
 }
 impl SettingsTrait for Settings{
@@ -164,9 +171,24 @@ impl SettingsTrait for Settings{
         self.parity_mode(ParityMode::Disabled);
         self.stop_bits(StopBits::_1);
     }
+    fn enable_rxi(&self, value:bool ) {
+        if value == true{
+            self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::RXCIE0 as u8) );
+        }else{
+            self.ucsr0b.modify(|v| v & !(1<<Ucsr0bBits::RXCIE0 as u8) );
+        }
+    }
+    fn enable_txi(&self, value:bool ) {
+        if value == true{
+            self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::TXCIE0 as u8) );
+        }else{
+            self.ucsr0b.modify(|v| v & !(1<<Ucsr0bBits::TXCIE0 as u8) );
+        }
+    }
 }
 //---
 pub struct Output{
+
 }
 //---
 pub struct Input{
@@ -174,6 +196,8 @@ pub struct Input{
 //---
 pub struct Uart{
     pub settings:Settings,
+    pub out:Output,
+    // pub in:Input,
 }
 impl Uart{
     pub const fn new()->Self{
