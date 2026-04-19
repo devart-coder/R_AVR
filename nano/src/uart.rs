@@ -108,8 +108,6 @@ impl Interrupt{
 }
 //---
 pub struct Settings{
-    ucsr0a:Register<u8>,
-    // ucsr0b:Register<u8>,
     ucsr0c:Register<u8>,
     ubrr0h:Register<u8>,
     ubrr0l:Register<u8>,
@@ -118,39 +116,33 @@ pub struct Settings{
 impl Settings{
     pub const fn new()-> Self{
         Settings {
-            ucsr0a: Register::new(UartRegisters::UCSR0A as usize),
-            // ucsr0b: Register::new(UartRegisters::UCSR0B as usize),
             ucsr0c: Register::new(UartRegisters::UCSR0C as usize),
             ubrr0h: Register::new(UartRegisters::UBRR0H as usize),
             ubrr0l: Register::new(UartRegisters::UBRR0L as usize),
             interrupt: Interrupt::new(),
         }
     }
-}
-impl Settings{
     pub fn double_speed(&self, value:bool){
+        let ucsr0a = Register::new(UartRegisters::UCSR0A as usize);
         if value == true {
-            self.ucsr0a.modify(|reg| reg|(1<<Ucsr0aBits::U2X0 as u8));
+            ucsr0a.modify(|reg| reg|(1<<Ucsr0aBits::U2X0 as u8));
         }else{
-            self.ucsr0a.modify(|reg| reg&(1<<Ucsr0aBits::U2X0 as u8));
+            ucsr0a.modify(|reg| reg&(1<<Ucsr0aBits::U2X0 as u8));
         }
     }
     pub fn package_bits(&self, value: PackageBits){
         match value {
-            PackageBits::_5 => {
-                self.ucsr0c.modify(|value| value & !((1<<Ucsr0cBits::UCSZ00 as u8)|(1<<Ucsr0cBits::UCSZ01 as u8)))
-            },
-            PackageBits::_6 => {
-                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ00 as u8))
-            }
-            PackageBits::_7 => {
-                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ01 as u8))
-            }
-            PackageBits::_8 => {
-                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ00 as u8)|(1<<Ucsr0cBits::UCSZ01 as u8))
-            }
+            PackageBits::_5 =>
+                self.ucsr0c.modify(|value| value & !((1<<Ucsr0cBits::UCSZ00 as u8)|(1<<Ucsr0cBits::UCSZ01 as u8))),
+            PackageBits::_6 =>
+                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ00 as u8)),
+            PackageBits::_7 =>
+                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ01 as u8)),
+            PackageBits::_8 =>
+                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ00 as u8)|(1<<Ucsr0cBits::UCSZ01 as u8)),
             PackageBits::_9 => {
-                // self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ0 as u8))
+                self.interrupt.ucsr0b.modify(|value| value | (1<<Ucsr0bBits::UCSZ02 as u8));
+                self.ucsr0c.modify(|value| value | (1<<Ucsr0cBits::UCSZ00 as u8)|(1<<Ucsr0cBits::UCSZ01 as u8));
             }
         }
     }
@@ -178,20 +170,21 @@ impl Settings{
         }
     }
     pub fn baud_rate(&self, value:BaudRate){
-        //NeedreMake
-        const f_cpu:u32 =16_000_000;
+        //TODO::NeedRemake
+        const F_CPU:u32 =16_000_000;
         let speed:u32 = match value{
             BaudRate::_115200=>{
                 self.double_speed(true);
-                (f_cpu/( 8*(value as u32) ))-1
+                8
             }
             _=>{
                 self.double_speed(false);
-                (f_cpu/(16*(value as u32)))-1
+                16
             }
         };
-            self.ubrr0h.write((speed>>8)as u8);
-            self.ubrr0l.write(speed as u8);
+        let speed = (F_CPU/(speed*(value as u32)))-1;
+        self.ubrr0h.write((speed>>8)as u8);
+        self.ubrr0l.write(speed as u8);
     }
     pub fn default(&self){
         self.baud_rate(BaudRate::_9600);
@@ -231,13 +224,30 @@ impl Output{
 }
 //---
 pub struct Input{
+    ucsr0a:Register<u8>,
+    udr0:Register<u8>,
+}
+impl Input {
+    pub const fn new()->Self{
+        Input {
+            ucsr0a: Register::new(UartRegisters::UCSR0A as usize),
+            udr0:	Register::new(UartRegisters::UDR0 	as usize),
+        }
+    }
+    pub fn receive_byte(&self)->u8{
+        while (self.ucsr0a.read() & (1 << Ucsr0aBits::RXC0 as u8)) == 0{}
+        self.udr0.read()
+    }
+    pub fn receive_byte_slice(&self)->[u8;1]{
+        [self.receive_byte()]//make a byte slice
+    }
 }
 //---
 pub struct Uart{
     pub settings:Settings,
     pub interrupt:Interrupt,
     pub out:Output,
-    // pub in:Input,
+    pub r#in:Input,
 }
 impl Uart{
     pub const fn new()->Self{
@@ -245,6 +255,7 @@ impl Uart{
             settings: Settings::new(),
             interrupt: Interrupt::new(),
             out: Output::new(),
+            r#in:Input::new(),
         }
     }
 }

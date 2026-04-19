@@ -10,3 +10,4 @@ pub mod pin;
 pub mod panics;
 pub mod uart;
 pub mod interrupts;
+pub mod delay;
