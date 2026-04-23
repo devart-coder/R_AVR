@@ -2,7 +2,7 @@ pub struct Register<T>{
     address:*mut T
 }
 impl Register<u8> {
-    pub const fn new(address: usize)->Self{
+    pub const fn new(address: u8)->Self{
         Self{address:address as *mut u8}
     }
     //WriteBlock

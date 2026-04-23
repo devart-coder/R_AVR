@@ -1,42 +1,5 @@
-use super::register::Register;
-pub enum UartRegisters{
-    UCSR0A = 0xC0,
-    UCSR0C = 0xC2,
-    UCSR0B = 0xC1,
-    UBRR0H = 0xC5,
-    UBRR0L = 0xC4,
-    UDR0   = 0xC6,
-}
-pub enum Ucsr0aBits{
-    MPCM0 = 0,
-    U2X0  = 1,
-    UPE0  = 2,
-    DOR0  = 3,
-    FE0   = 4,
-    UDRE0 = 5,
-    TXC0  = 6,
-    RXC0  = 7,
-}
-pub enum Ucsr0bBits{
-    TXB80   = 0,
-    RXB80   = 1,
-    UCSZ02  = 2,
-    TXEN0   = 3,
-    RXEN0   = 4,
-    UDRIE0  = 5,
-    TXCIE0  = 6,
-    RXCIE0  = 7,
-}
-pub enum Ucsr0cBits{
-    UCPOL0  = 0,
-    UCSZ00  = 1,
-    UCSZ01  = 2,
-    USBS0   = 3,
-    UPM00   = 4,
-    UPM01   = 5,
-    UMSEL00 = 6,
-    UMSEL01 = 7,
-}
+use crate::utils::{callable::CallBacks,register::Register};
+use crate::mcu::registers::*;
 #[repr(u32)]
 pub enum BaudRate{
     _300=300,
@@ -65,48 +28,46 @@ pub enum StopBits{
     _1,
     _2
 }
-//---
+
 pub struct Interrupt{
     ucsr0b: Register<u8>,
-    rx_callback : Option<fn()>,
-    tx_callback : Option<fn()>,
+    call_array : CallBacks<2,()>,
 }
 impl Interrupt{
     pub const fn new()->Self{
         Interrupt {
-            ucsr0b: Register::new(UartRegisters::UCSR0B as usize),
-            rx_callback: None,
-            tx_callback: None,
+            ucsr0b: Register::new(UartRegisters::UCSR0B as u8),
+            call_array : CallBacks::new(),
         }
     }
-    pub fn set_rx_handle(&mut self, f:fn()){
-        self.rx_callback = Some(f);
+    pub fn set_rx_handle(&mut self, f:fn(())){
+        self.call_array.set_callback(0,f);
     }
-    pub fn set_tx_handle(&mut self, f:fn()){
-        self.rx_callback = Some(f);
+    pub fn set_tx_handle(&mut self, f:fn(())){
+        self.call_array.set_callback(1,f);
     }
-    pub fn handle_rx(&self) -> Option<fn()>{
-        self.rx_callback
+    pub fn handle_rx(&self) -> Option<fn(())>{
+        self.call_array.call(0)
     }
-    pub fn handle_tx(&self) -> Option<fn()>{
-        self.tx_callback
+    pub fn handle_tx(&self) -> Option<fn(())>{
+        self.call_array.call(1)
     }
     pub fn enable_rxi(&self, value:bool ) {
         if value == true{
-        self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::RXCIE0 as u8)|(1<<Ucsr0bBits::RXEN0 as u8) );
+            self.ucsr0b.modify(|v| v|(1<<Ucsr0bBits::RXCIE0 as u8)|(1<<Ucsr0bBits::RXEN0 as u8));
         }else{
-            self.ucsr0b.modify(|v| v & !((1<<Ucsr0bBits::RXCIE0 as u8)|(1<<Ucsr0bBits::RXEN0 as u8)) );
+            self.ucsr0b.modify(|v| v&!((1<<Ucsr0bBits::RXCIE0 as u8)|(1<<Ucsr0bBits::RXEN0 as u8)));
         }
     }
     pub fn enable_txi(&self, value:bool ) {
         if value == true{
-        self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::TXCIE0 as u8)|(1<<Ucsr0bBits::TXEN0 as u8) );
+            self.ucsr0b.modify(|v| v | (1<<Ucsr0bBits::TXCIE0 as u8)|(1<<Ucsr0bBits::TXEN0 as u8));
         }else{
-            self.ucsr0b.modify(|v| v & !((1<<Ucsr0bBits::TXCIE0 as u8)|(1<<Ucsr0bBits::TXEN0 as u8)) );
+            self.ucsr0b.modify(|v| v & !((1<<Ucsr0bBits::TXCIE0 as u8)|(1<<Ucsr0bBits::TXEN0 as u8)));
         }
     }
 }
-//---
+
 pub struct Settings{
     ucsr0c:Register<u8>,
     ubrr0h:Register<u8>,
@@ -116,14 +77,14 @@ pub struct Settings{
 impl Settings{
     pub const fn new()-> Self{
         Settings {
-            ucsr0c: Register::new(UartRegisters::UCSR0C as usize),
-            ubrr0h: Register::new(UartRegisters::UBRR0H as usize),
-            ubrr0l: Register::new(UartRegisters::UBRR0L as usize),
+            ucsr0c: Register::new(UartRegisters::UCSR0C as u8),
+            ubrr0h: Register::new(UartRegisters::UBRR0H as u8),
+            ubrr0l: Register::new(UartRegisters::UBRR0L as u8),
             interrupt: Interrupt::new(),
         }
     }
     pub fn double_speed(&self, value:bool){
-        let ucsr0a = Register::new(UartRegisters::UCSR0A as usize);
+        let ucsr0a = Register::new(UartRegisters::UCSR0A as u8);
         if value == true {
             ucsr0a.modify(|reg| reg|(1<<Ucsr0aBits::U2X0 as u8));
         }else{
@@ -182,7 +143,7 @@ impl Settings{
                 16
             }
         };
-        let speed = (F_CPU/(speed*(value as u32)))-1;
+        let speed=(F_CPU/(speed*(value as u32)))-1;
         self.ubrr0h.write((speed>>8)as u8);
         self.ubrr0l.write(speed as u8);
     }
@@ -194,9 +155,8 @@ impl Settings{
         self.interrupt.enable_rxi(true);
         self.interrupt.enable_txi(true);
     }
-
 }
-//---
+
 pub struct Output{
     ucsr0a:Register<u8>,
     udr0:Register<u8>,
@@ -204,8 +164,8 @@ pub struct Output{
 impl Output{
     pub const fn new()->Self{
         Output {
-            ucsr0a: Register::new(UartRegisters::UCSR0A as usize),
-            udr0: Register::new(UartRegisters::UDR0 as usize),
+            ucsr0a: Register::new(UartRegisters::UCSR0A as u8),
+            udr0: Register::new(UartRegisters::UDR0 as u8),
         }
     }
     pub fn send_slice(&self, string:&str){
@@ -222,7 +182,7 @@ impl Output{
         self.send_slice(string);
     }
 }
-//---
+
 pub struct Input{
     ucsr0a:Register<u8>,
     udr0:Register<u8>,
@@ -230,8 +190,8 @@ pub struct Input{
 impl Input {
     pub const fn new()->Self{
         Input {
-            ucsr0a: Register::new(UartRegisters::UCSR0A as usize),
-            udr0:	Register::new(UartRegisters::UDR0 	as usize),
+            ucsr0a: Register::new(UartRegisters::UCSR0A as u8),
+            udr0:	Register::new(UartRegisters::UDR0 	as u8),
         }
     }
     pub fn receive_byte(&self)->u8{
@@ -242,21 +202,22 @@ impl Input {
         [self.receive_byte()]//make a byte slice
     }
 }
-//---
+
 pub struct Uart{
     pub settings:Settings,
     pub interrupt:Interrupt,
-    pub out:Output,
-    pub r#in:Input,
+    pub output:Output,
+    pub input:Input,
 }
 impl Uart{
     pub const fn new()->Self{
         Uart {
             settings: Settings::new(),
             interrupt: Interrupt::new(),
-            out: Output::new(),
-            r#in:Input::new(),
+            output: Output::new(),
+            input:Input::new(),
         }
     }
 }
+
 pub const uart:Uart = Uart::new();
