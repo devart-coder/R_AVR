@@ -7,22 +7,26 @@ pub enum Ports{
 #[repr(u8)]
 pub enum TimerRegisters{
     TCNT0 =0x46,
-    TCCR0B=0x45,
-    TCCR0A=0x44,
-
-
-    TCCR1C=0x82,
-    TCCR1B=0x81,
-    TCCR1A=0x80,
-
+    TCNT1H=0x85,
+    TCNT1L=0x84,
     TCNT2 =0xB2,
-    TCCR2B=0xB1,
-    TCCR2A=0xB0,
 
-    OCR1BH=0x8B,
-    OCR1BL=0x8A,
+    TCCR0A=0x44,
+    TCCR0B=0x45,
+    TCCR1A=0x80,
+    TCCR1B=0x81,
+    TCCR1C=0x82,
+    TCCR2A=0xB0,
+    TCCR2B=0xB1,
+
+    OCR0A=0x47,
+    OCR0B=0x48,
     OCR1AH=0x89,
     OCR1AL=0x88,
+    OCR1BH=0x8B,
+    OCR1BL=0x8A,
+    OCR2B=0xB4,
+    OCR2A=0xB3,
 }
 #[repr(u8)]
 pub enum Tccr0bBits{
