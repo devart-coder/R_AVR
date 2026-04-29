@@ -45,7 +45,7 @@ pub extern "avr-interrupt" fn __vector_13(){//TIMER1_OVF
 #[unsafe(no_mangle)]
 pub extern "avr-interrupt" fn __vector_14(){//TIMER0_COMPA
     unsafe{
-    if let Some(cb) = TIMER_0.callback.as_ref(){
+    if let Some(cb) = Timer::<0>::get().callback.as_ref(){
         if let Some(f) = cb.channal_a_callback(){
             f();
         }

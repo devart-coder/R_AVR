@@ -14,23 +14,25 @@ use nano::delay::Delay;
 fn main() -> ! {
     sei();
     Pins::take().d6.into_output();
-    TIMER_0.interrupt.a_channel_enable(true);
-    TIMER_0.interrupt.b_channel_enable(true);
-    TIMER_0.settings.set_mode(Mode::Normal);
-    unsafe{(*TIMER_0.callback).channal_a(
+    let t0 = Timer::<0>::get();
+    t0.interrupt.a_channel_enable(true);
+    t0.interrupt.b_channel_enable(true);
+    t0.settings.set_mode(Mode::Normal);
+    unsafe{
+        (*t0.callback).channal_a(
         ||{
             let p = Pins::take().d13.into_output();
             p.set_high();
         });
     };
-    TIMER_0.settings.prescaling(Prescaling::_64);
+    t0.settings.prescaling(Prescaling::_64);
     loop{
         for i in 0..=255{
-            TIMER_0.action.set_counter_a(i);
+            unsafe{t0.action.set_counter_a(i);};
             Delay::delay_ms(1);
         }
         for i in 0..=255{
-            TIMER_0.action.set_counter_b(i);
+            unsafe{t0.action.set_counter_b(i);};
             Delay::delay_ms(1);
         }
     };

@@ -20,6 +20,9 @@ impl Timer<0>{
 			interrupt : Interrupt::<0>::new(),
 		}
 	}
+	pub fn get() -> &'static mut Self{
+	    unsafe { &mut *core::ptr::addr_of_mut!(T0) }
+	}
 }
 impl Timer<2>{
     pub const fn new()->Self{
@@ -30,6 +33,9 @@ impl Timer<2>{
 			interrupt : Interrupt::<2>::new(),
 		}
 	}
+	// pub fn get() -> &'static mut Self{
+	    // unsafe { &mut *core::ptr::addr_of_mut!(T2) }
+	// }
 }
 impl Timer<1>{
     pub const fn new()->Self{
@@ -40,7 +46,11 @@ impl Timer<1>{
 			interrupt : Interrupt::<1>::new(),
 		}
 	}
+	// pub fn get() -> &'static mut Self{
+	    // unsafe { &mut *core::ptr::addr_of_mut!(T0) }
+	// }
 }
-pub const TIMER_0:Timer<0> = Timer::<0>::new();
-pub const TIMER_1:Timer<1> = Timer::<1>::new();
-pub const TIMER_2:Timer<2> = Timer::<2>::new();
+unsafe impl<const N: u8> Sync for Timer<N> where(): RegisterSelection<N>{}
+pub static mut T0:Timer<0> = Timer::<0>::new();
+pub const T1:Timer<1> = Timer::<1>::new();
+pub const T2:Timer<2> = Timer::<2>::new();
