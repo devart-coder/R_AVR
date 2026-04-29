@@ -4,9 +4,9 @@ macro_rules! define_port {
     ($struct_name:ident, $pin:expr) => {
         #[repr(C)]
         pub struct $struct_name {
-            pub pin : Register<u8>,
-            pub ddr : Register<u8>,
-            pub port: Register<u8>,
+            pub pin : Register,
+            pub ddr : Register,
+            pub port: Register,
         }
         impl $struct_name {
             pub const fn new()->Self{

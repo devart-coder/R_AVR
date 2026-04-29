@@ -30,26 +30,26 @@ pub enum StopBits{
 }
 
 pub struct Interrupt{
-    ucsr0b: Register<u8>,
-    call_array : CallBacks<2,()>,
+    ucsr0b: Register,
+    call_array : CallBacks<2,fn()>,
 }
 impl Interrupt{
     pub const fn new()->Self{
         Interrupt {
             ucsr0b: Register::new(UartRegisters::UCSR0B as u8),
-            call_array : CallBacks::new(),
+            call_array : CallBacks::<2,fn()>::new(),
         }
     }
-    pub fn set_rx_handle(&mut self, f:fn(())){
+    pub fn set_rx_handle(&mut self, f:fn()){
         self.call_array.set_callback(0,f);
     }
-    pub fn set_tx_handle(&mut self, f:fn(())){
+    pub fn set_tx_handle(&mut self, f:fn()){
         self.call_array.set_callback(1,f);
     }
-    pub fn handle_rx(&self) -> Option<fn(())>{
+    pub fn handle_rx(&self) -> Option<fn()>{
         self.call_array.call(0)
     }
-    pub fn handle_tx(&self) -> Option<fn(())>{
+    pub fn handle_tx(&self) -> Option<fn()>{
         self.call_array.call(1)
     }
     pub fn enable_rxi(&self, value:bool ) {
@@ -69,9 +69,9 @@ impl Interrupt{
 }
 
 pub struct Settings{
-    ucsr0c:Register<u8>,
-    ubrr0h:Register<u8>,
-    ubrr0l:Register<u8>,
+    ucsr0c:Register,
+    ubrr0h:Register,
+    ubrr0l:Register,
     pub interrupt : Interrupt,
 }
 impl Settings{
@@ -158,8 +158,8 @@ impl Settings{
 }
 
 pub struct Output{
-    ucsr0a:Register<u8>,
-    udr0:Register<u8>,
+    ucsr0a:Register,
+    udr0:Register,
 }
 impl Output{
     pub const fn new()->Self{
@@ -184,8 +184,8 @@ impl Output{
 }
 
 pub struct Input{
-    ucsr0a:Register<u8>,
-    udr0:Register<u8>,
+    ucsr0a:Register,
+    udr0:Register,
 }
 impl Input {
     pub const fn new()->Self{

@@ -1,8 +1,7 @@
-use crate::mcu::registers::*;
-pub struct Register<T>{
-    address:*mut T
+pub struct Register{
+    address:*mut u8
 }
-impl Register<u8> {
+impl Register{
     pub const fn new(address: u8)->Self{
         Self{address:address as *mut u8}
     }
@@ -26,8 +25,8 @@ impl Register<u8> {
 }
 //---DOUBLE---
 pub struct RegisterU16{
-    pub lreg: Register<u8>,
-    pub hreg: Register<u8>,
+    pub lreg: Register,
+    pub hreg: Register,
 }
 impl RegisterU16{
     const fn new ()->Self{
@@ -69,13 +68,13 @@ pub trait RegisterSelection<const N:u8>{
     type RegType;
 }
 impl RegisterSelection<0> for (){
-    type RegType = Register<u8>;
+    type RegType = Register;
 }
 impl RegisterSelection<1> for (){
     type RegType = RegisterU16;
 }
 impl RegisterSelection<2> for (){
-    type RegType = Register<u8>;
+    type RegType = Register;
 }
 
 

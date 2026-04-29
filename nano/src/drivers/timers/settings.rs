@@ -1,5 +1,6 @@
 use crate::mcu::registers::*;
 use crate::utils::register::*;
+use crate::interrupts::{sei,cli};
 pub enum Prescaling {
     NoSource = 0,
     _1 = 1,
@@ -11,15 +12,15 @@ pub enum Prescaling {
     ExternalClockRising = 7,
 }
 pub enum Mode {
-    Normal,
-    CTC,
-    PwdFast,
-    PwdPhaseCorrect,
+    Normal = 0,
+    CTC = 1,
+    PwdFast = 2,
+    PwdPhaseCorrect = 3,
 }
 pub struct Settings<const T:u8>{
     _prescaling:Prescaling,
-    _tccrb:Register<u8>,
-    _tccra:Register<u8>,
+    _tccrb:Register,
+    _tccra:Register,
 }
 impl<const T:u8> Settings<T>{
     pub const fn new() -> Option<Self>{
@@ -156,7 +157,9 @@ impl<const T:u8> Settings<T>{
         self._tccra.modify(|w| w|n);
     }
     pub fn default(&mut self){
+        cli();
         self.prescaling(Prescaling::_64);
         self.set_mode(Mode::Normal);
+        sei();
     }
 }
