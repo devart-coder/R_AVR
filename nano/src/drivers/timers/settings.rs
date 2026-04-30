@@ -1,6 +1,6 @@
 use crate::mcu::registers::*;
 use crate::utils::register::*;
-use crate::interrupts::{sei,cli};
+use crate::interrupts::sei;
 pub enum Prescaling {
     NoSource = 0,
     _1 = 1,
@@ -157,7 +157,6 @@ impl<const T:u8> Settings<T>{
         self._tccra.modify(|w| w|n);
     }
     pub fn default(&mut self){
-        cli();
         self.prescaling(Prescaling::_64);
         self.set_mode(Mode::Normal);
         sei();

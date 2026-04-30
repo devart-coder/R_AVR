@@ -6,7 +6,7 @@ impl Callback{
     pub const fn new()->Self{
 	    Self{ _callback:CallBacks::<3,fn()>::new(), }
 	}
-	pub unsafe fn channal_a(&mut self,f:fn()){
+	pub fn channal_a(&mut self,f:fn()){
 	    self._callback.set_callback(0, f);
 	}
 	pub fn channal_b(&mut self,f:fn()){

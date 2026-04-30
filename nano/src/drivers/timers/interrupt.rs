@@ -8,7 +8,6 @@ impl Interrupt<0>{
 	    Self { timsk : Register::new(TimerRegisters::TIMSK0 as u8), }
 	}
 }
-
 impl Interrupt<1>{
     pub const fn new ()->Self{
 	    Self { timsk : Register::new(TimerRegisters::TIMSK1 as u8), }

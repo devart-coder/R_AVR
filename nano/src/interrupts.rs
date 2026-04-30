@@ -44,23 +44,16 @@ pub extern "avr-interrupt" fn __vector_13(){//TIMER1_OVF
 }
 #[unsafe(no_mangle)]
 pub extern "avr-interrupt" fn __vector_14(){//TIMER0_COMPA
-    unsafe{
-    if let Some(cb) = Timer::<0>::get().callback.as_ref(){
-        if let Some(f) = cb.channal_a_callback(){
-            f();
-        }
-    }
+    if let Some(f) = Timer::<0>::get().callback().channal_a_callback(){
+        f();
     }
 }
-// #[unsafe(no_mangle)]
-// pub extern "avr-interrupt" fn __vector_15(){//TIMER0_COMPB
-//     unsafe{
-//     let tf = TIMER_0.callback.channal_b_callback();
-//         if let Some(f)=tf{
-//             f();
-//         };
-//     }
-// }
+#[unsafe(no_mangle)]
+pub extern "avr-interrupt" fn __vector_15(){//TIMER0_COMPB
+    if let Some(f) = Timer::<0>::get().callback().channal_b_callback(){
+            f();
+    }
+}
 // pub extern "avr-interrupt" fn __vector_16(){//TIMER0_OVF
 //     // TIMER_0.callback.ovf_callback().unwrap()();
 // }
