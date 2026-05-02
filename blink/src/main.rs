@@ -11,8 +11,8 @@ fn main() -> ! {
     sei();
     Pins::take().d6.into_output();
     let t0 = Timer::<0>::get();
-    t0.interrupt.a_channel_enable(true);
-    t0.interrupt.b_channel_enable(true);
+    t0.interrupt().a_channel_enable(true);
+    t0.interrupt().b_channel_enable(true);
     t0.callback().channal_a( ||{
         let p = Pins::take().d13.into_output();
         p.set_high();
@@ -21,14 +21,14 @@ fn main() -> ! {
         let p = Pins::take().d13.into_output();
         p.set_low();
     });
-    t0.settings.default();
+    t0.settings().default();
     loop{
         for i in 0..=255{
-            t0.action.set_counter_a(i);
+            t0.action().set_counter_a(i);
             Delay::delay_ms(2);
         }
         for i in 0..=255{
-            t0.action.set_counter_b(i);
+            t0.action().set_counter_b(i);
             Delay::delay_ms(2);
         }
     };

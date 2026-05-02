@@ -1,5 +1,6 @@
 use crate::utils::{callable::CallBacks,register::Register};
 use crate::mcu::registers::*;
+use crate::F_CPU;
 #[repr(u32)]
 pub enum BaudRate{
     _300=300,
@@ -131,8 +132,6 @@ impl Settings{
         }
     }
     pub fn baud_rate(&self, value:BaudRate){
-        //TODO::NeedRemake
-        const F_CPU:u32 =16_000_000;
         let speed:u32 = match value{
             BaudRate::_115200=>{
                 self.double_speed(true);

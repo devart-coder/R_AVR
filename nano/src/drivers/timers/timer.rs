@@ -5,10 +5,10 @@ use crate::utils::register::*;
 use super::interrupt::*;
 static mut CALL_BACKS:Callback = Callback::new();
 pub struct Timer <const N:u8> where(): RegisterSelection<N>{
-    pub settings  : Settings<N>,
+    settings  : Settings<N>,
 	callback  : *mut Callback,
-	pub action    : Action<N>,
-	pub interrupt : Interrupt<N>,
+	action    : Action<N>,
+	interrupt : Interrupt<N>,
 }
 unsafe impl<const N: u8> Sync for Timer<N> where(): RegisterSelection<N>{}
 macro_rules! impl_timer {
@@ -28,6 +28,15 @@ macro_rules! impl_timer {
 			}
 			pub fn callback(&mut self)->&mut Callback{
 			    unsafe {&mut *self.callback}
+			}
+			pub fn interrupt(&mut self)->&mut Interrupt<$index>{
+			    &mut self.interrupt
+			}
+			pub fn action(&mut self)->&mut Action<$index>{
+			    &mut self.action
+			}
+			pub fn settings(&mut self)->&mut Settings<$index>{
+			    &mut self.settings
 			}
 		}
 	};

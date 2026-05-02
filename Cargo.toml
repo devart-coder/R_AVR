@@ -1,7 +1,10 @@
-[package]
-name = "AVR"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members = [
+    "nano",
+    "blink",
+    "main"
+]
+
 [profile.dev]
 panic = "abort"
 lto = true
@@ -11,5 +14,4 @@ opt-level = "s"
 panic = "abort"
 lto = true
 opt-level = "s"
-[dependencies]
-nano = { path = "./nano" }
+
