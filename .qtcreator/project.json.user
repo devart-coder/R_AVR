@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 18.0.0, 2026-05-01T20:19:06. -->
+<!-- Written by QtCreator 18.0.0, 2026-05-02T23:05:51. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -126,14 +126,14 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
      </valuemap>
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.3">
-      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">false</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Arguments">-I elf32-avr -O ihex -R .eeprom -R .fuse -R .lock -R .signature target/avr-atmel-atmega328p/debug/AVR target/avr-atmel-atmega328p/debug/AVR.hex</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-objcopy</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
      </valuemap>
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.4">
-      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">false</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Arguments">target/avr-atmel-atmega328p/debug/AVR.hex</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.Command">avr-size</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>

@@ -13,6 +13,5 @@ rustflags = [
     "-C", "relocation-model=static",
     "-C", "lto=yes",
 ]
-runner = "avrdude -C/etc/avrdude.conf -v -patmega328p -carduino -P/dev/ttyUSB0 -b115200 -D -Uflash:w:"
-# [env]
-# AVR_CPU_FREQUENCY_HZ = "8000000"
+# runner = "avrdude -C/etc/avrdude.conf -v -patmega328p -carduino -P/dev/ttyUSB0 -b115200 -D -Uflash:w:"
+runner = "./.cargo/flash.sh"
