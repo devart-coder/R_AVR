@@ -1,9 +1,13 @@
 #![no_std]
 #![no_main]
-use nano::drivers::uart::{interrupt::*, uart::uart};
+use nano::Uart;
+use nano::delay::Delay;
 #[unsafe(no_mangle)]
 fn main(){
-    let u= uart;
-    uart.interrupt;
-    u.output.send_slice("string");
+    let mut u= Uart::new();
+    u.settings.default();
+    loop{
+        u.output.send_slice("string\n");
+        Delay::delay_ms(1000/2);
+    }
 }

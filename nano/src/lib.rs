@@ -20,7 +20,7 @@ const fn parse_u32(s: &str) -> u32 {
     }
     res
 }
-
+pub use crate::drivers::uart::uart::Uart;
 pub mod drivers;
 pub mod mcu;
 pub mod utils;
