@@ -1,21 +1,17 @@
 use core::arch::asm;
-use super::drivers::uart::*;
+use super::drivers::uart::uart::uart;
 use crate::drivers::timers::timer::*;
-use crate::mcu::pins::Pins;
-pub fn sei(){
-    unsafe{ asm!("sei"); }
-}
+pub fn sei(){ unsafe{ asm!("sei"); } }
+pub fn cli(){ unsafe{ asm!("cli"); } }
 
-pub fn cli(){
-    unsafe{ asm!("cli"); }
-}
 #[unsafe(no_mangle)]
-
 pub extern "avr-interrupt" fn __vector_18(){//UART_RX_COMPLETE
     uart.interrupt.handle_rx();
 }
+#[unsafe(no_mangle)]
 pub extern "avr-interrupt" fn __vector_19(){//UART_DRE
 }
+#[unsafe(no_mangle)]
 pub extern "avr-interrupt" fn __vector_20(){//UART_TX_COMPLETE
     uart.interrupt.handle_tx();
 }

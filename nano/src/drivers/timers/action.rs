@@ -1,7 +1,6 @@
-// use super::action_trait::*;
 use crate::mcu::registers::*;
 use crate::utils::register::*;
-
+use crate::drivers::timers::RegisterSelection;
 pub struct Action<const N:u8>where ():RegisterSelection<N> {
     ocra:<() as RegisterSelection<N>>::RegType,
     ocrb:<() as RegisterSelection<N>>::RegType,

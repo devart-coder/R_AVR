@@ -1,0 +1,46 @@
+
+# The run config is used for both run mode and debug mode
+[[configs]]
+name = "Build blink"
+program = "cargo"
+args = ["build", "-p", "blink"]
+
+[[configs]]
+name = "Build main"
+program = "cargo"
+args = ["build", "-p", "main"]
+
+[configs.prelaunch]
+ program = "cargo"
+ args = [
+   "build",
+ ]
+
+[[configs]]
+name = "flash blink"
+program = "cargo"
+args = ["run","-p", "blink"]
+cwd = "${workspace}"
+
+[[configs]]
+name = "flash main"
+program = "cargo"
+args = ["run","-p", "main"]
+cwd = "${workspace}"
+
+# [[configs]]
+# name = "Generate HEX"
+# program = "avr-objcopy"
+# # Аргументы: извлекаем секции .text и .data и конвертируем в ihex
+# args = [
+#     "-O", "ihex", 
+#     "-j", ".text", 
+#     "-j", ".data", 
+#     "target/avr-atmega328p/debug/main", # Путь к вашему elf
+#     # "target/avr-atmega328p/debug/main"  # Путь к итоговому hex
+# ]
+
+# [configs.prelaunch]
+# program = "cargo"
+# args = ["build"] # Сначала собираем проект, потом запускаем objcopy
+# cwd = "${workspace}"

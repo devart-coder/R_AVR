@@ -1,9 +1,10 @@
 use super::action::Action;
 use super::callback::Callback;
 use super::settings::*;
-use crate::utils::register::*;
 use super::interrupt::*;
+use crate::drivers::timers::RegisterSelection;
 static mut CALL_BACKS:Callback = Callback::new();
+
 pub struct Timer <const N:u8> where(): RegisterSelection<N>{
     settings  : Settings<N>,
 	callback  : *mut Callback,

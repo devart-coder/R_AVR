@@ -7,20 +7,24 @@ impl Register{
     }
     //WriteBlock
     pub fn write(&self, value:u8){
-        unsafe{
-            core::ptr::write_volatile(self.address,value);
-        }
+        unsafe{ core::ptr::write_volatile(self.address,value); }
     }
     //ReadBlock
     pub fn read(&self)->u8{
-        unsafe{
-            core::ptr::read_volatile(self.address)
-        }
+        unsafe{ core::ptr::read_volatile(self.address) }
     }
     //ModifyBlock
     pub fn modify<F> (&self, f:F) where F:FnOnce(u8)->u8{
-        let value = self.read();
-        self.write(f(value));
+        self.write(f(self.read()));
+    }
+    //Bits
+    pub fn set_bit(&self, value:u8){
+        assert!(value >=0 && value <=8,"[Register]: value out of bounds");
+        self.modify(|w| w|(1<<value));
+    }
+    pub fn clear_bit(&self, value:u8){
+        assert!(value >=0 && value <=8,"[Register]: value out of bounds");
+        self.modify(|w| w&!(1<<value));
     }
 }
 //---DOUBLE---
@@ -64,18 +68,3 @@ impl RegisterU16Builder{
         self.reg
     }
 }
-pub trait RegisterSelection<const N:u8>{
-    type RegType;
-}
-impl RegisterSelection<0> for (){
-    type RegType = Register;
-}
-impl RegisterSelection<1> for (){
-    type RegType = RegisterU16;
-}
-impl RegisterSelection<2> for (){
-    type RegType = Register;
-}
-
-
-
