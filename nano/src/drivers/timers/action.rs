@@ -73,6 +73,28 @@ impl ActionTrait for Action<0>{
         self.tcnt.read()
     }
 }
+impl ActionTrait for Action<2>{
+    type ArgType = u8;
+    fn set_counter_a(&mut self, value:Self::ArgType){
+        self.ocra.write(value);
+    }
+    fn set_counter_b(&mut self, value:Self::ArgType){
+        self.ocrb.write(value);
+    }
+    fn set_timer_counter(&mut self, value:Self::ArgType){
+        self.tcnt.write(value);
+    }
+    fn counter_a(&self)->Self::ArgType{
+        self.ocra.read()
+    }
+    fn counter_b(&self)->Self::ArgType{
+        self.ocrb.read()
+    }
+    fn timer_counter(&self)->Self::ArgType{
+        self.tcnt.read()
+    }
+}
+
 impl ActionTrait for Action<1>{
     type ArgType = u16;
     fn set_counter_a(&mut self, value:Self::ArgType){
@@ -82,6 +104,9 @@ impl ActionTrait for Action<1>{
         self.ocrb.write(value);
     }
     fn set_timer_counter(&mut self, value:Self::ArgType){
+        let [low, high] = value.to_be_bytes();
+        self.ocrb.lreg.write(low);
+        self.ocrb.hreg.write(high);
     }
     fn counter_a(&self)->Self::ArgType{
         self.ocra.read()

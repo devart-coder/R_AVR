@@ -1,13 +1,10 @@
 #![no_std]
 #![no_main]
-use nano::Uart;
-use nano::delay::Delay;
+use nano::drivers::Pwm;
+use nano::drivers::Timer;
 #[unsafe(no_mangle)]
 fn main(){
-    let mut u= Uart::new();
-    u.settings.default();
+    let _p = Pwm::new(Timer::<0>::get());
     loop{
-        u.output.send_slice("string\n");
-        Delay::delay_ms(1000/2);
     }
 }

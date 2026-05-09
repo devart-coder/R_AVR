@@ -13,14 +13,18 @@ fn main() -> ! {
     let t0 = Timer::<0>::get();
     t0.interrupt().a_channel_enable(true);
     t0.interrupt().b_channel_enable(true);
-    t0.callback().channal_a( ||{
-        let p = Pins::take().d13.into_output();
-        p.set_high();
-    });
-    t0.callback().channal_b(||{
-        let p = Pins::take().d13.into_output();
-        p.set_low();
-    });
+    t0.callback().channal_a( 
+        || {
+            let p = Pins::take().d13.into_output();
+            p.set_high();
+        }
+    );
+    t0.callback().channal_b(
+        || {
+            let p = Pins::take().d13.into_output();
+            p.set_low();
+        }
+    );
     t0.settings().default();
     loop{
         for i in 0..=255{

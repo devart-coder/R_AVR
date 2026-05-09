@@ -19,11 +19,11 @@ impl Register{
     }
     //Bits
     pub fn set_bit(&self, value:u8){
-        assert!(value >=0 && value <=8,"[Register]: value out of bounds");
+        assert!(value <=8,"[Register]: value out of bounds");
         self.modify(|w| w|(1<<value));
     }
     pub fn clear_bit(&self, value:u8){
-        assert!(value >=0 && value <=8,"[Register]: value out of bounds");
+        assert!(value <=8,"[Register]: value out of bounds");
         self.modify(|w| w&!(1<<value));
     }
 }
@@ -37,9 +37,7 @@ impl RegisterU16{
         RegisterU16 { lreg: Register::new(0), hreg: Register::new(0) }
     }
     pub fn write(&self, value:u16){
-        let bytes = value.to_be_bytes();
-        let l = bytes[0] as u8;
-        let h = bytes[1] as u8;
+        let [l,h] = value.to_be_bytes();
         self.lreg.write(l);
         self.hreg.write(h);
     }

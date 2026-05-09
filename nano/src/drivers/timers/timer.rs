@@ -3,9 +3,9 @@ use super::callback::Callback;
 use super::settings::*;
 use super::interrupt::*;
 use crate::drivers::timers::RegisterSelection;
+use crate::drivers::pwm::pwm::*;
 static mut CALL_BACKS:Callback = Callback::new();
-
-pub struct Timer <const N:u8> where(): RegisterSelection<N>{
+pub struct Timer <const N:u8> where (): RegisterSelection<N>{
     settings  : Settings<N>,
 	callback  : *mut Callback,
 	action    : Action<N>,
@@ -15,7 +15,7 @@ unsafe impl<const N: u8> Sync for Timer<N> where(): RegisterSelection<N>{}
 macro_rules! impl_timer {
     ($index:expr) => {
 	    impl Timer<$index>{
-		    pub const fn new()->Self{
+		    const fn new()->Self{
 			    Self{
 				    settings: Settings::<$index>::new().unwrap(),
 					callback: core::ptr::addr_of_mut!(CALL_BACKS) ,
@@ -38,6 +38,11 @@ macro_rules! impl_timer {
 			}
 			pub fn settings(&mut self)->&mut Settings<$index>{
 			    &mut self.settings
+			}
+			pub fn into_pwm(&mut self)->Pwm<$index>{
+        			self.settings().set_mode(Mode::PwdFast);
+        			self.settings().prescaling(Prescaling::_64);
+				Pwm::new(Timer::<$index>::get())		
 			}
 		}
 	};

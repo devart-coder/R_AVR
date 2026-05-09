@@ -18,10 +18,10 @@ impl Output{
         }
     }
     pub fn send_bool(&self, value:bool){
-        let string = match value{
+        let result = match value{
             true => "true",
             false => "false",
         };
-        self.send_slice(string);
+        self.send_slice(result);
     }
 }

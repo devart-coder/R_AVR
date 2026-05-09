@@ -1,7 +1,7 @@
 use crate::{mcu::registers::*, utils::register::Register};
 
 pub struct Interrupt <const N:u8>{
-    pub timsk : Register,
+    timsk : Register,
 }
 impl Interrupt<0>{
     pub const fn new ()->Self{

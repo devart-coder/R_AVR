@@ -7,7 +7,7 @@ pub struct Uart{
     pub input:Input,
 }
 impl Uart{
-    pub const fn new()->Self{
+    const fn new()->Self{
         Uart {
             settings: Settings::new(),
             interrupt: Interrupt::new(),
@@ -15,5 +15,20 @@ impl Uart{
             input:Input::new(),
         }
     }
+    pub fn settings(&mut self)->&mut Settings{
+        &mut self.settings
+    }
+    pub fn interrupt(&mut self)->&mut Interrupt{
+        &mut self.interrupt
+    }
+    pub fn output(&mut self)->&mut Output{
+        &mut self.output
+    }
+    pub fn input(&mut self)->&mut Input{
+        &mut self.input
+    }
+    pub fn get()->&'static mut Uart{
+        static mut U:Uart = Uart::new();
+        unsafe { &mut *core::ptr::addr_of_mut!(U)}
+    }
 }
-pub const uart:Uart = Uart::new();
