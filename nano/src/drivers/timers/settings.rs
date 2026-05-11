@@ -23,6 +23,12 @@ pub struct Settings<const T:u8>{
     _tccra:Register,
 }
 impl<const T:u8> Settings<T>{
+    pub fn tccra(&mut self)->&mut Register{
+        &mut self._tccra
+    }
+    pub fn tccrab(&mut self)->&mut Register{
+        &mut self._tccrb
+    }
     pub const fn new() -> Option<Self>{
         match T{
             0 =>Some(

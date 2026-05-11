@@ -41,7 +41,6 @@ macro_rules! impl_timer {
 			}
 			pub fn into_pwm(&mut self)->Pwm<$index>{
         			self.settings().set_mode(Mode::PwdFast);
-        			self.settings().prescaling(Prescaling::_64);
 				Pwm::new(Timer::<$index>::get())		
 			}
 		}
