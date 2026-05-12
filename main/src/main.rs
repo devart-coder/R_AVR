@@ -12,15 +12,15 @@ fn main(){
     let pins = Pins::take();
     pins.d5.into_output();
     pins.d6.into_output();
-    let mut t =Timer::<0>::get().into_pwm();
-    t.prescaling(Prescaling::_64);
-    // let mut a = t.a_channel();
-    let mut b = t.b_channel();
-    // a.set_mode(PwmMode::NonInverted);
+    let t =Timer::<0>::get();
+    let mut p=Pwm::new(t);
+    p.prescaling(Prescaling::_64);
+    let (mut a,mut b) = p.channels();
+    a.set_mode(PwmMode::NonInverted);
     b.set_mode(PwmMode::NonInverted);
     loop{
         for i in 0..=255{
-            // a.set_duty(i);
+            a.set_duty(i);
             Delay::delay_ms(1);
         }
         for i in (0..=255).rev(){

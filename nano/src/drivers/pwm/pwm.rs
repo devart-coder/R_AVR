@@ -18,17 +18,18 @@ impl <'a,const N:u8> Pwm<'a,N> where () : RegisterSelection<N>{
 //---
 pub trait Pwmable<'a,const N:u8> where () : RegisterSelection<N>{
     type PwmType;
-    fn a_channel(&'a mut self)->BranchA<'a,N>;
-    fn b_channel(&'a mut self)->BranchB<'a,N>;
+    fn channels(&'a mut self)->(BranchA<'a,N>, BranchB<'a,N> );
     fn prescaling(&mut self, p:Prescaling);
 }
 impl<'a> Pwmable<'a,0> for Pwm<'a,0>{
     type PwmType = u8;
-    fn a_channel(&'a mut self)->BranchA<'a,0> {
-        BranchA::new(self.timer)
-    }
-    fn b_channel(&'a mut self)->BranchB<'a,0> {
-        BranchB::new(self.timer)
+    fn channels(&'a mut self)->(BranchA<'a,0>, BranchB<'a,0> ){
+        let ptr = self as *mut Self;
+        unsafe{
+            let a = BranchA::new(&mut *ptr);
+            let b = BranchB::new(&mut *ptr);
+           (a,b) 
+        }
     }
     fn prescaling(&mut self, p:Prescaling){
         self.timer.settings().prescaling(p);
@@ -39,8 +40,8 @@ pub struct BranchA<'a,const N:u8> where () : RegisterSelection<N>{
     timer : &'a mut Timer<N>,
 }
 impl<'a> BranchA<'a,0> where () : RegisterSelection<0>{
-    pub fn new(t:&'a mut Timer<0>)->BranchA<'a,0>{
-        Self{ timer : t }
+    pub fn new(t:&'a mut Pwm<'a,0>)->BranchA<'a,0>{
+        Self{ timer : t.timer }
     }
 }
 //---
@@ -48,8 +49,8 @@ pub struct BranchB<'a,const N:u8> where () : RegisterSelection<N>{
     timer : &'a mut Timer<N>,
 }
 impl<'a> BranchB<'a,0> where () : RegisterSelection<0>{
-    pub fn new(t:&'a mut Timer<0>)->BranchB<'a,0>{
-        Self{ timer : t }
+    pub fn new(t:&'a mut Pwm<'a,0>)->BranchB<'a,0>{
+        Self{ timer : t.timer }
     }
 }
 //---
