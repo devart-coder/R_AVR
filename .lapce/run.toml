@@ -3,29 +3,29 @@
 [[configs]]
 name = "Build blink"
 program = "cargo"
-args = ["build", "-p", "blink"]
+args = ["+nightly","build","-p","blink"]
 
 [[configs]]
 name = "Build main"
 program = "cargo"
-args = ["build", "-p", "main"]
+args = ["+nightly","build","-p","main"]
 
 [configs.prelaunch]
  program = "cargo"
  args = [
-   "build",
+   "+nightly","build",
  ]
 
 [[configs]]
 name = "flash blink"
 program = "cargo"
-args = ["run","-p", "blink"]
+args = ["+nightly","run","-p", "blink"]
 cwd = "${workspace}"
 
 [[configs]]
 name = "flash main"
 program = "cargo"
-args = ["run","-p", "main"]
+args = ["+nightly","run","-p", "main"]
 cwd = "${workspace}"
 
 # [[configs]]
