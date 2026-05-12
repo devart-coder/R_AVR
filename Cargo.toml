@@ -16,3 +16,5 @@ opt-level = "s"
 panic = "abort"
 lto = true
 opt-level = "s"
+[unstable]
+json-target-spec = true
