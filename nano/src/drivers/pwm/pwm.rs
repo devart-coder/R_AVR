@@ -1,9 +1,9 @@
-use core::{borrow::Borrow, cell::RefCell, ops::Deref};
+use core::cell::RefCell;
 
-use crate::drivers::{timers::{action::{Action, ActionTrait}, RegisterSelection}, Timer};
+use crate::{drivers::{timers::{action::{Action, ActionTrait}, RegisterSelection}, Timer}, pin::*, port::{ PortD}};
 use crate::drivers::timers::settings::*;
 use crate::mcu::registers::*;
-
+use crate::mcu::pins::Pins;
 pub enum PwmMode{
     Normal,
     NonInverted,
@@ -46,14 +46,23 @@ impl<'a> BranchA<0> where () : RegisterSelection<0>{
     pub fn new(s: Settings<0>, a: Action<0>)->BranchA<0>{
         Self { settings : RefCell::new(s), action : RefCell::new(a) }
     }
+    pub fn get_pin(&self)->Pin<PortD, 5, Input>{
+        Pins::take().d5
+    }
 }
 pub struct BranchB<const N:u8> where () : RegisterSelection<N>{
     settings : RefCell<Settings<N>>,
-    action   : RefCell<Action<N>>, 
+    action   : RefCell<Action<N>>,
 }
 impl<'a> BranchB<0> where () : RegisterSelection<0>{
     pub fn new(s: Settings<0>, a:Action<0>)->BranchB<0>{
-        Self { settings : RefCell::new(s), action : RefCell::new(a) }
+        Self { 
+            settings : RefCell::new(s),
+            action : RefCell::new(a) ,
+        }
+    }
+    pub fn get_pin(&self)->Pin<PortD, 6, Input>{
+        Pins::take().d6
     }
 }
 //---
@@ -93,7 +102,6 @@ impl<'a> Branchable for BranchB<0>{
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);
-            
         }else{
             self.settings.borrow_mut().tccra().modify(|reg| reg | bits);
         }

@@ -24,6 +24,6 @@ define_port!(PortB, Ports::PortB as u8);
 define_port!(PortC, Ports::PortC as u8);
 define_port!(PortD, Ports::PortD as u8);
 
-pub const PORTB:PortB = PortB::new();
-pub const PORTC:PortC = PortC::new();
-pub const PORTD:PortD = PortD::new();
+pub static mut PORTB:PortB = PortB::new();
+pub static mut PORTC:PortC = PortC::new();
+pub static mut PORTD:PortD = PortD::new();
