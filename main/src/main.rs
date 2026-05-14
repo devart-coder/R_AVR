@@ -5,11 +5,13 @@ use nano::drivers::*;
 use nano::delay::Delay;
 #[unsafe(no_mangle)]
 fn main(){
-    let mut pwm = Timer::<0>::get().into_pwm();
-    pwm.prescaling(Prescaling::_256);
+    let mut pwm = Timer::<1>::get().into_pwm();
+    pwm.prescaling(Prescaling::_64);
+    
     let (mut a,mut b) = pwm.channels();
     a.set_mode(PwmMode::NonInverted);
     a.get_pin().into_output();
+    
     b.set_mode(PwmMode::NonInverted);
     b.get_pin().into_output();
     loop{

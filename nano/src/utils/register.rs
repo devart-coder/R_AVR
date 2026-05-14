@@ -37,14 +37,14 @@ impl RegisterU16{
         RegisterU16 { lreg: Register::new(0), hreg: Register::new(0) }
     }
     pub fn write(&self, value:u16){
-        let [l,h] = value.to_be_bytes();
-        self.lreg.write(l);
+        let [l,h] = value.to_le_bytes();
         self.hreg.write(h);
+        self.lreg.write(l);
     }
     pub fn read(&self)->u16{
         let l = self.lreg.read();
         let h = self.hreg.read();
-        u16::from_be_bytes([l,h])
+        u16::from_le_bytes([l,h])
     }
 }
 pub struct RegisterU16Builder{
