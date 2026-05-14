@@ -1,5 +1,5 @@
-use crate::pin::*;
-use crate::port::*;
+use crate::utils::pin::*;
+use super::ports::*;
 pub struct Pins{
     pub d0:Pin::<PortD, 0, Input>,
     pub d1:Pin::<PortD, 1, Input>,

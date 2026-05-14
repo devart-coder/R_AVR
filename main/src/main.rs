@@ -2,7 +2,7 @@
 #![no_main]
 use nano::drivers::timers::settings::Prescaling;
 use nano::drivers::*;
-use nano::delay::Delay;
+use nano::utils::delay::*;
 #[unsafe(no_mangle)]
 fn main(){
     let mut pwm = Timer::<1>::get().into_pwm();
@@ -17,19 +17,19 @@ fn main(){
     loop{
         for i in 0..=255{
             a.set_duty(i);
-            Delay::delay_ms(1);
+            delay_ms(1);
         }
         for i in (0..=255).rev(){
             a.set_duty(i);
-            Delay::delay_ms(1);
+            delay_ms(1);
         }
         for i in 0..=255{
             b.set_duty(i);
-            Delay::delay_ms(1);
+            delay_ms(1);
         }
         for i in (0..=255).rev(){
             b.set_duty(i);
-            Delay::delay_ms(1);
+            delay_ms(1);
         }
     }
 }

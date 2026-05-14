@@ -5,7 +5,7 @@ use nano::drivers::timers::action::*;
 use nano::drivers::timers::interrupt::*;
 use nano::mcu::pins::Pins;
 use nano::interrupts::*;
-use nano::delay::Delay;
+use nano::utils::delay::*;
 #[unsafe(no_mangle)]
 fn main() -> ! {
     sei();
@@ -29,11 +29,11 @@ fn main() -> ! {
     loop{
         for i in 0..=255{
             t0.action().set_counter_a(i);
-            Delay::delay_ms(2);
+            delay_ms(2);
         }
         for i in 0..=255{
             t0.action().set_counter_b(i);
-            Delay::delay_ms(2);
+            delay_ms(2);
         }
     };
 }
