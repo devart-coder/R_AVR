@@ -104,4 +104,3 @@ pub enum Tccr2bBits{
     FOC2B=6,
     FOC2A=7,
 }
-
