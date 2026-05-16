@@ -24,10 +24,5 @@ const fn parse_u32(s: &str) -> u32 {
 pub mod drivers;
 pub mod mcu;
 pub mod utils;
-
-pub mod delay;
 pub mod interrupts;
 pub mod panics;
-pub mod pin;
-pub mod port;
-pub mod port_trait;

@@ -1,13 +1,13 @@
 pub struct Input;
 pub struct Output;
-use super::port_trait::PortTrait;
+use crate::mcu::ports::Portable;
 
-pub struct Pin<PORT:PortTrait, const BIT:u8, MOD>{
+pub struct Pin<PORT:Portable, const BIT:u8, MOD>{
     _port: core::marker::PhantomData<PORT>,
     _mod:  core::marker::PhantomData<MOD>,
 }
 
-impl<PORT:PortTrait, const BIT:u8> Pin<PORT, BIT, Input>{
+impl<PORT:Portable, const BIT:u8> Pin<PORT, BIT, Input>{
     pub const fn new() -> Self {
         Self {
             _port: core::marker::PhantomData,
@@ -22,6 +22,7 @@ impl<PORT:PortTrait, const BIT:u8> Pin<PORT, BIT, Input>{
     }
     pub fn into_output(&self)->Pin<PORT, BIT, Output>{
         PORT::ddr().modify(|reg| reg|(1<<BIT));
+        self._port;
         Pin{
             _port:core::marker::PhantomData,
             _mod:core::marker::PhantomData,
@@ -29,7 +30,7 @@ impl<PORT:PortTrait, const BIT:u8> Pin<PORT, BIT, Input>{
     }
 }
 
-impl<PORT:PortTrait, const BIT:u8> Pin<PORT, BIT, Output>{
+impl<PORT:Portable, const BIT:u8> Pin<PORT, BIT, Output>{
     pub fn set_high(&self){
         PORT::port().modify(|reg| reg|(1<< BIT));
     }

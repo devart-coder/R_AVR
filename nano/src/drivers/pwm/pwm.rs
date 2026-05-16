@@ -1,5 +1,6 @@
 use core::cell::RefCell;
-use crate::{drivers::{timers::{action::{Action, ActionTrait}, RegisterSelection}, Timer}, pin::*, port::*};
+use crate::{drivers::{timers::{action::{Action, ActionTrait}, RegisterSelection}, Timer}, mcu::ports::*};
+use crate::utils::pin::*;
 use crate::drivers::timers::settings::*;
 use crate::mcu::{pins::Pins, registers::*};
 

@@ -1,5 +1,5 @@
-use crate::pin::*;
-use crate::port::*;
+use crate::{utils::pin::*, mcu::ex_int::*};
+use super::ports::*;
 pub struct Pins{
     pub d0:Pin::<PortD, 0, Input>,
     pub d1:Pin::<PortD, 1, Input>,
@@ -54,5 +54,19 @@ impl Pins{
             a6:Pin::<PortC, 6, Input>::new(),
             a7:Pin::<PortC, 7, Input>::new(),
         }
+    }
+}
+
+pub trait Interruptable<const N:u8> {
+    fn into_interrupt()->ExInt<N>;
+}
+impl<Port:Portable, Mode> Interruptable<0> for Pin<Port,2, Mode>{
+    fn into_interrupt()->ExInt<0> {
+        todo!()
+    }
+}
+impl<Port:Portable, Mode> Interruptable<1> for Pin<Port,3, Mode>{
+    fn into_interrupt()->ExInt<1> {
+        todo!()
     }
 }
