@@ -1,4 +1,10 @@
 #[repr(u8)]
+pub enum ExIntRegisters{
+    EICRA = 0x69,
+    EIFR = 0x1C,
+    EIMSK = 0x1D,
+}
+#[repr(u8)]
 pub enum Ports{
     PortB = 0x23,
     PortC = 0x26,
