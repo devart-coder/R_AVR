@@ -1,5 +1,5 @@
 use crate::utils::register::Register;
-use crate::mcu::registers::Ports;
+use crate::mcu::registers_list::Ports;
 
 pub struct PortB;
 pub struct PortC;

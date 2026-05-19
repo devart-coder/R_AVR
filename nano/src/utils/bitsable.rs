@@ -1,4 +1,4 @@
-use crate::mcu::registers::{eicra::*,eimsk::*};
+use crate::mcu::registers::{eicra::*, eifr::EifrBuilder, eimsk::*};
 pub trait Bitsable{
     fn set_mask(&mut self, mask:u8);
     fn reset_mask(&mut self, mask:u8);
@@ -15,4 +15,4 @@ macro_rules! impl_bits_able {
         )*
     };
 }
-impl_bits_able!(EicraBuilder,EimskBuilder);
+impl_bits_able!(EicraBuilder,EimskBuilder,EifrBuilder);
