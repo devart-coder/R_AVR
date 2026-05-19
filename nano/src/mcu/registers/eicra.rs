@@ -15,16 +15,16 @@ impl EicraBits{
 //---
 pub struct EicraBuilder(pub u8);
 impl EicraBuilder{
-    pub fn isc00(self)->BitOperations::<{EicraBits::ISC00},EicraBuilder>{
-        BitOperations::<{EicraBits::ISC00},EicraBuilder>(self)
+    pub fn isc00(self)->BitOperations::<{EicraBits::ISC00},Self>{
+        BitOperations::<{EicraBits::ISC00},Self>(self)
     }
-    pub fn isc01(self)->BitOperations<{EicraBits::ISC01},EicraBuilder>{
-        BitOperations::<{EicraBits::ISC01},EicraBuilder>(self)
+    pub fn isc01(self)->BitOperations<{EicraBits::ISC01},Self>{
+        BitOperations::<{EicraBits::ISC01},Self>(self)
     }
-    pub fn isc10(self)->BitOperations<{EicraBits::ISC10},EicraBuilder>{
-        BitOperations::<{EicraBits::ISC10},EicraBuilder>(self)
+    pub fn isc10(self)->BitOperations<{EicraBits::ISC10},Self>{
+        BitOperations::<{EicraBits::ISC10},Self>(self)
     }
-    pub fn isc11(self)->BitOperations<{EicraBits::ISC11},EicraBuilder>{
-        BitOperations::<{EicraBits::ISC11},EicraBuilder>(self)
+    pub fn isc11(self)->BitOperations<{EicraBits::ISC11},Self>{
+        BitOperations::<{EicraBits::ISC11},Self>(self)
     }
 }

@@ -12,3 +12,7 @@ pub mod tccr1b;
 //---TIMER_2---
 pub mod tccr2a;
 pub mod tccr2b;
+
+pub mod timsk0;
+pub mod timsk1;
+pub mod timsk2;

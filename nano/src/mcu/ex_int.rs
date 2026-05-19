@@ -1,3 +1,5 @@
+use core::ops::Deref;
+
 use crate::utils::register::Register;
 
 use super::registers::eicra::*;
@@ -46,8 +48,7 @@ impl ExInt<1>{
         EicraBuilder(0)
         .isc00().set_bit()
         .isc01().set_bit()
-        .isc10().toogle()
-        ;
+        .isc10().toogle();
         Self{
             eimsk : Register::new(ExIntRegisters::EIMSK as u8),
             eicra : Register::new(ExIntRegisters::EICRA as u8),

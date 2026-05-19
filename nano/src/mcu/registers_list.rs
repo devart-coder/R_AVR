@@ -49,21 +49,4 @@ pub enum TimerRegisters{
     TIMSK0=0x6E,
     TIMSK1=0x6F,
     TIMSK2=0x70,
-
-}
-pub enum Timsk0Bits{
-    TOIE0 = 0,
-    OCIE0A = 1,
-    OCIE0B = 2,
-}
-pub enum Timsk1Bits{
-    TOIE1 = 0,
-    OCIE1A = 1,
-    OCIE1B = 2,
-    ICIE1 = 5,
-}
-pub enum Timsk2Bits{
-    TOIE2 = 0,
-    OCIE2A = 1,
-    OCIE2B = 2,
 }

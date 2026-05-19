@@ -9,10 +9,10 @@ impl EimskBits{
 }
 pub struct EimskBuilder (pub u8);
 impl EimskBuilder{
-    pub fn int0(self)->BitOperations<{EimskBits::INT0},EimskBuilder>{
-        BitOperations::<{EimskBits::INT0},EimskBuilder>(self)
+    pub fn int0(self)->BitOperations<{EimskBits::INT0},Self>{
+        BitOperations::<{EimskBits::INT0},Self>(self)
     }    
-    pub fn int1(self)->BitOperations<{EimskBits::INT1},EimskBuilder>{
-        BitOperations::<{EimskBits::INT1},EimskBuilder>(self)
+    pub fn int1(self)->BitOperations<{EimskBits::INT1},Self>{
+        BitOperations::<{EimskBits::INT1},Self>(self)
     }
 }
