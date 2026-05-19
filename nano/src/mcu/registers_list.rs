@@ -1,15 +1,27 @@
 #[repr(u8)]
 pub enum ExIntRegisters{
-    EICRA = 0x69,
-    EIFR = 0x1C,
-    EIMSK = 0x1D,
+    Eicra = 0x69,
+    Eifr  = 0x1C,
+    Eimsk = 0x1D,
 }
+impl ExIntRegisters{
+    const EICRA:u8 = Self::Eicra as u8;
+    const EIFR:u8 = Self::Eifr as u8;
+    const EIMSK:u8 = Self::Eimsk as u8;
+}
+//---
 #[repr(u8)]
 pub enum Ports{
     PortB = 0x23,
     PortC = 0x26,
     PortD = 0x29
 }
+impl Ports {
+    const PORTB:u8 = Self::PortB as u8;
+    const PORTC:u8 = Self::PortC as u8;
+    const PORTD:u8 = Self::PortD as u8;
+}
+//---
 #[repr(u8)]
 pub enum TimerRegisters{
     TCNT0 =0x46,
@@ -54,59 +66,4 @@ pub enum Timsk2Bits{
     TOIE2 = 0,
     OCIE2A = 1,
     OCIE2B = 2,
-}
-#[repr(u8)]
-pub enum Tccr0bBits{
-    CS00  = 0,
-    CS01  = 1,
-    CS02  = 2,
-    WGM02 = 3,
-    FOC0B = 6,
-    FOC0A = 7
-}
-#[repr(u8)]
-pub enum Tccr0aBits{
-    WGM00  = 0,
-    WGM01  = 1,
-    COM0B0 = 4,
-    COM0B1 = 5,
-    COM0A0 = 6,
-    COM0A1 = 7,
-}
-#[repr(u8)]
-pub enum Tccr1aBits{
-    WGM10  = 0,
-    WGM11  = 1,
-    COM1B0 = 4,
-    COM1B1 = 5,
-    COM1A0 = 6,
-    COM1A1 = 7,
-}
-#[repr(u8)]
-pub enum Tccr1bBits{
-    CS10=0,
-    CS11=1,
-    CS12=2,
-    WGM12=3,
-    WGM13=4,
-    ICES1=6,
-    ICNC1=7,
-}
-#[repr(u8)]
-pub enum Tccr2aBits{
-    WGM20  = 0,
-    WGM21  = 1,
-    COM2B0 = 4,
-    COM2B1 = 5,
-    COM2A0 = 6,
-    COM2A1 = 7,
-}
-#[repr(u8)]
-pub enum Tccr2bBits{
-    CS20=0,
-    CS21=1,
-    CS22=2,
-    WGM22=3,
-    FOC2B=6,
-    FOC2A=7,
 }
