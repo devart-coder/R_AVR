@@ -1,6 +1,10 @@
+use core::ops::Deref;
+
 use crate::utils::register::Register;
 
-use super::builders::{ EicraBuilder};
+use super::registers::eicra::*;
+use super::registers::eimsk::*;
+use super::registers::eifr::*;
 //D2 - 0 - Bits::ISC00,ISC01
 //D3 - 1 - Bits::ISC10,ISC11
 
@@ -19,21 +23,6 @@ pub enum ExIntRegisters{
     EIFR = 0x1C,
     EIMSK = 0x1D,
 }
-pub enum EicraBits{
-    ISC00 = 0,
-    ISC01 = 1,
-    ISC10 = 2,
-    ISC11 = 3,
-}
-pub enum EimskBits{
-    INT0 = 0,
-    INT1 = 1,
-}
-pub enum EifrBits{
-    INTF0 = 0,
-    INTF1 = 1,
-}
-
 pub struct ExInt<const N:u8>{
     eimsk : Register,
     eicra : Register,
@@ -46,7 +35,7 @@ impl ExInt<0>{
         }
     }
     pub fn set_mod(&mut self, mode:InterruptMode){
-        let result = match mode{
+        let _result = match mode{
             InterruptMode::Low=>0,
             InterruptMode::Change=>0,
             InterruptMode::Rising=>0,
@@ -59,8 +48,7 @@ impl ExInt<1>{
         EicraBuilder(0)
         .isc00().set_bit()
         .isc01().set_bit()
-        .isc10().toogle()
-        ;
+        .isc10().toogle();
         Self{
             eimsk : Register::new(ExIntRegisters::EIMSK as u8),
             eicra : Register::new(ExIntRegisters::EICRA as u8),
