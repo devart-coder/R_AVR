@@ -2,6 +2,9 @@ use crate::mcu::registers::{eicra::EicraBuilder, eifr::EifrBuilder, eimsk::Eimsk
 use crate::mcu::registers::{tccr0a::Tccr0aBuilder,tccr0b::Tccr0bBuilder};
 use crate::mcu::registers::{tccr1a::Tccr1aBuilder,tccr1b::Tccr1bBuilder};
 use crate::mcu::registers::{tccr2a::Tccr2aBuilder,tccr2b::Tccr2bBuilder};
+use crate::mcu::registers::timsk0::Timsk0Builder;
+// use crate::mcu::registers::timsk0::Timsk1Builder;
+// use crate::mcu::registers::timsk0::Timsk2Builder;
 pub trait Bitsable{
     fn set_mask(&mut self, mask:u8);
     fn reset_mask(&mut self, mask:u8);
