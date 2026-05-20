@@ -21,4 +21,7 @@ impl Timsk0Builder{
     pub fn ocie0b(self)->BitOperations<{Timsk0Bits::OCIE0B},Self>{
         BitOperations::<{Timsk0Bits::OCIE0B},Self>(self)
     }
+    pub fn build(self)->u8{
+        self.0
+    }
 }
