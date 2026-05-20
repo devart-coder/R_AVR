@@ -1,7 +1,7 @@
-use crate::mcu::registers::{eicra::*, eifr::EifrBuilder, eimsk::*};
-use crate::mcu::registers::{tccr0a::*,::tccr0b::*};
-use crate::mcu::registers::{tccr1a::*,::tccr1b::*};
-use crate::mcu::registers::{tccr2a::*,::tccr2b::*};
+use crate::mcu::registers::{eicra::EicraBuilder, eifr::EifrBuilder, eimsk::EimskBuilder};
+use crate::mcu::registers::{tccr0a::Tccr0aBuilder,tccr0b::Tccr0bBuilder};
+use crate::mcu::registers::{tccr1a::*,tccr1b::*};
+use crate::mcu::registers::{tccr2a::*,tccr2b::*};
 pub trait Bitsable{
     fn set_mask(&mut self, mask:u8);
     fn reset_mask(&mut self, mask:u8);
