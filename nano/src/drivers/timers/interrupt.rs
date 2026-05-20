@@ -2,6 +2,7 @@ use crate::mcu::registers::timsk1::Timsk1Builder;
 use crate::mcu::registers::timsk2::Timsk2Builder;
 use crate::{mcu::registers_list::*, utils::register::Register};
 use crate::mcu::registers::timsk0::*;
+
 pub struct Interrupt <const N:u8>{
     timsk : Register,
 }
