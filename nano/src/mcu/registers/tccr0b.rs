@@ -37,4 +37,7 @@ impl Tccr0bBuilder{
     pub fn foc0b(self)->BitOperations<{Tccr0bBits::FOC0B},Self>{
         BitOperations::<{Tccr0bBits::FOC0B},Self>(self)  
     }
+    pub fn build(self)->u8{
+        self.0
+    }
 }

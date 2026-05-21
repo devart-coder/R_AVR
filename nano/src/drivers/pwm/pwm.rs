@@ -1,5 +1,5 @@
 use core::cell::RefCell;
-use tccr0a::{Tccr0aBits, Tccr0aBuilder};
+use tccr0a::Tccr0aBuilder;
 use tccr1a::Tccr1aBuilder;
 use tccr2a::Tccr2aBuilder;
 
