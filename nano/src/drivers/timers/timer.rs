@@ -39,7 +39,7 @@ macro_rules! impl_timer {
 			pub fn settings(&mut self)->&mut Settings<$index>{
 			    &mut self.settings
 			}
-			pub fn into_pwm(&mut self)->Pwm<$index>{
+			pub fn into_pwm(&mut self)->Pwm<'_, $index>{
         			self.settings().set_mode(Mode::PwdFast);
 				Pwm::new(Timer::<$index>::get())		
 			}

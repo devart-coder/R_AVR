@@ -118,3 +118,19 @@ impl ActionTrait for Action<1>{
         self.tcnt.read()
     }
 }
+
+impl Clone for Action<0> where ():RegisterSelection<0>{
+    fn clone(&self) -> Self {
+        Action::<0>::new()
+    }
+}
+impl Clone for Action<1> where ():RegisterSelection<1>{
+    fn clone(&self) -> Self {
+        Action::<1>::new()
+    }
+}
+impl Clone for Action<2> where ():RegisterSelection<2>{
+    fn clone(&self) -> Self {
+        Action::<2>::new()
+    }
+}
