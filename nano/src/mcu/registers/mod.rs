@@ -20,3 +20,10 @@ pub mod timsk2;
 pub mod spcr;
 pub mod spsr;
 pub mod spdr;
+//TWI
+pub mod twcr;
+pub mod twar;
+pub mod twbr;
+pub mod twdr;
+pub mod twsr;
+pub mod twamr;
