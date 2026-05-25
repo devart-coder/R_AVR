@@ -3,6 +3,7 @@ use crate::mcu::registers::spdr::SpdrBuilder;
 use crate::mcu::registers::spsr::SpsrBuilder;
 use crate::mcu::registers::twbr::TwbrBuilder;
 use crate::mcu::registers::twcr::TwcrBuilder;
+use crate::mcu::registers::twsr::TwsrBuilder;
 use crate::mcu::registers::{eicra::EicraBuilder, eifr::EifrBuilder, eimsk::EimskBuilder};
 use crate::mcu::registers::{tccr0a::Tccr0aBuilder,tccr0b::Tccr0bBuilder};
 use crate::mcu::registers::{tccr1a::Tccr1aBuilder,tccr1b::Tccr1bBuilder};
@@ -33,4 +34,4 @@ impl_bits_able!(Timsk0Builder,Timsk1Builder,Timsk2Builder);
 //SPI
 impl_bits_able!(SpcrBuilder,SpsrBuilder,SpdrBuilder);
 //TWI
-impl_bits_able!(TwbrBuilder,TwcrBuilder);
+impl_bits_able!(TwbrBuilder,TwcrBuilder,TwsrBuilder);
