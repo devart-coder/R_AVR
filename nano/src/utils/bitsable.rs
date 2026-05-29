@@ -26,6 +26,7 @@ macro_rules! impl_bits_able {
         )*
     };
 }
+//Timers
 impl_bits_able!(EicraBuilder,EimskBuilder,EifrBuilder);
 impl_bits_able!(Tccr0aBuilder,Tccr0bBuilder);
 impl_bits_able!(Tccr1aBuilder,Tccr1bBuilder);

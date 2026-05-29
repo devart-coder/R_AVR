@@ -1,4 +1,8 @@
 use crate::utils::bit_operations::BitOperations;
+pub struct Twcr;
+impl Twcr{
+    pub fn address()->u8{ 0xBC }    
+}
 
 pub enum TwcrBits{ //TwiControlRegister
     Twie  = 0,//TWIInterruptEnable
@@ -39,7 +43,10 @@ impl TwcrBuilder{
     pub fn twea(self)->BitOperations<{TwcrBits::TWEA},Self>{
         BitOperations::<{TwcrBits::TWEA},Self>(self)
     }
-    pub fn twin(self)->BitOperations<{TwcrBits::TWIN},Self>{
+    pub fn twint(self)->BitOperations<{TwcrBits::TWIN},Self>{
         BitOperations::<{TwcrBits::TWIN},Self>(self)
+    }
+    pub fn build(self)->u8{
+        self.0
     }
 }
