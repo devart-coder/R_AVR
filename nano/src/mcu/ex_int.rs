@@ -1,10 +1,7 @@
-use core::ops::Deref;
 
 use crate::utils::register::Register;
 
 use super::registers::eicra::*;
-use super::registers::eimsk::*;
-use super::registers::eifr::*;
 //D2 - 0 - Bits::ISC00,ISC01
 //D3 - 1 - Bits::ISC10,ISC11
 

@@ -1,13 +1,18 @@
 use crate::utils::bit_operations::BitOperations;
 
+pub struct Twsr;
+impl Twsr{
+    pub fn address()->u8{ 0xB9}
+}
+
 pub enum TwsrBits{//TWIStatusRegister
-    Twps0 = 0,
-    Twps1 = 1,
-    Tws3  = 3,
-    Tws4  = 4,
-    Tws5  = 5,
-    Tws6  = 6,
-    Tws7  = 7,
+    Twps0 = 0,//TWI Prescaler 0
+    Twps1 = 1,//TWI Prescaler 1
+    Tws3  = 3,//TWI Status
+    Tws4  = 4,//TWI Status
+    Tws5  = 5,//TWI Status
+    Tws6  = 6,//TWI Status
+    Tws7  = 7,//TWI Status
 }
 impl TwsrBits{
     const TWPS0:u8 = Self::Twps0 as u8;

@@ -3,14 +3,14 @@
 version = 4
 
 [[package]]
-name = "blink"
+name = "blink_test"
 version = "0.1.0"
 dependencies = [
  "nano",
 ]
 
 [[package]]
-name = "main"
+name = "main_test"
 version = "0.1.0"
 dependencies = [
  "nano",
@@ -19,3 +19,10 @@ dependencies = [
 [[package]]
 name = "nano"
 version = "0.1.0"
+
+[[package]]
+name = "twi_test"
+version = "0.1.0"
+dependencies = [
+ "nano",
+]

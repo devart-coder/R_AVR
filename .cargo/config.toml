@@ -1,6 +1,5 @@
 [unstable]
 build-std = ["core"]
-json-target-spec = true
 [build]
 target = ".cargo/avr-atmel-atmega328p.json"
 
