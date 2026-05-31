@@ -41,7 +41,13 @@ impl Master {
             .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
         self.wait_for_send().check_status_code(StatusCode::STARTED)
     }
-    pub fn stop(self) {
+    pub fn restart(self) -> Result<Self, u8> {
+        self.twcr
+            .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
+        self.wait_for_send()
+            .check_status_code(StatusCode::START_REPEATED)
+    }
+    pub fn stop(&self) {
         self.twcr
             .modify(|v| v.twen().set_bit().twsto().set_bit().twint().set_bit());
     }
