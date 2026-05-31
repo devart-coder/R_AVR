@@ -14,7 +14,7 @@ impl Twcr {
         F: FnOnce(TwcrBuilder) -> TwcrBuilder,
     {
         let result = builder(TwcrBuilder(0)).build();
-        self.register.modify(|r| r | result);
+        self.register.write(result);
     }
     pub fn write(&self, value: u8) {
         self.register.write(value);

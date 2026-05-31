@@ -15,6 +15,7 @@ impl Twi {
         }
     }
     pub fn speed(self, value: u8) -> Self {
+        self.twbr.write(value);
         self
     }
     pub fn prescaler_mode(self, mode: PrescalerMode) -> Self {

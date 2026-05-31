@@ -24,44 +24,43 @@ impl Master {
             twsr: Twsr::new(),
         }
     }
-    fn _check_twint_flag_set(self) -> Self {
+    fn wait_for_send(self) -> Self {
         let value = TwcrBuilder(0).twint().set_bit().build();
         while (self.twcr.read() & value) == 0 {}
         self
     }
-    fn _check_status_code(self, status: u8) -> Result<Self, u8> {
+    fn check_status_code(self, status: u8) -> Result<Self, u8> {
         match self.twsr.read() & 0xF8 == status {
             true => Ok(self),
-            false => Err(status),
+            false => Err(self.twsr.read() & 0xF8),
         }
     }
 
     pub fn start(self) -> Result<Self, u8> {
         self.twcr
             .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
-        let this = self._check_twint_flag_set();
-        this._check_status_code(StatusCode::STARTED)
+        self.wait_for_send().check_status_code(StatusCode::STARTED)
     }
     pub fn stop(self) {
         self.twcr
             .modify(|v| v.twen().set_bit().twsto().set_bit().twint().set_bit());
     }
     pub fn send_address_with_write(self, val: u8) -> Result<Self, u8> {
-        let this = self
-            .write_data(val << 1 | Self::WRITE)
-            ._check_twint_flag_set();
-        this._check_status_code(StatusCode::SLA_W_ACK)
+        self.write_byte(val << 1 | Self::WRITE)
+            .check_status_code(StatusCode::SLA_W_ACK)
     }
     pub fn send_address_with_read(self, val: u8) -> Result<Self, u8> {
-        let this = self
-            .write_data(val << 1 | Self::READ)
-            ._check_twint_flag_set();
-        this._check_status_code(StatusCode::SLA_R_ACK)
+        self.write_byte(val << 1 | Self::READ)
+            .check_status_code(StatusCode::SLA_R_ACK)
     }
-    pub fn write_data(self, val: u8) -> Self {
-        self.twdr.write(val);
+    fn write_byte(self, v: u8) -> Self {
+        self.twdr.write(v);
         self.twcr.modify(|v| v.twint().set_bit().twen().set_bit());
-        self._check_twint_flag_set()
+        self.wait_for_send()
+    }
+    pub fn write_data(self, val: u8) -> Result<Self, u8> {
+        self.write_byte(val)
+            .check_status_code(StatusCode::DATA_RACK)
     }
 }
 pub enum StatusCode {}
