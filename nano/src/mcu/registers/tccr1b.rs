@@ -42,4 +42,8 @@ impl Tccr1bBuilder{
     pub fn icnc1(self)->BitOperations<{Tccr1bBits::ICNC1},Self>{
         BitOperations::<{Tccr1bBits::ICNC1},Self>(self)  
     }
+    pub fn build(self)->u8{
+        self.0
+    }
+
 }

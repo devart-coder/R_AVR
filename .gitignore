@@ -1,2 +1,5 @@
+/target,
+/nano/target/*,
+/nano/target/,
 /target
-/nano/target
+/*.pdf

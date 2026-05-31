@@ -37,4 +37,7 @@ impl Tccr2bBuilder{
     pub fn foc2b(self)->BitOperations<{Tccr2bBits::FOC2B},Self>{
         BitOperations::<{Tccr2bBits::FOC2B},Self>(self)  
     }
+    pub fn build(self)->u8{
+        self.0
+    }
 }

@@ -16,3 +16,14 @@ pub mod tccr2b;
 pub mod timsk0;
 pub mod timsk1;
 pub mod timsk2;
+//SPI
+pub mod spcr;
+pub mod spsr;
+pub mod spdr;
+//TWI
+pub mod twcr;
+pub mod twar;
+pub mod twbr;
+pub mod twdr;
+pub mod twsr;
+pub mod twamr;

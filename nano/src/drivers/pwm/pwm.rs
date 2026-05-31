@@ -1,4 +1,8 @@
 use core::cell::RefCell;
+use tccr0a::Tccr0aBuilder;
+use tccr1a::Tccr1aBuilder;
+use tccr2a::Tccr2aBuilder;
+
 use crate::{drivers::{timers::{action::{Action, ActionTrait}, RegisterSelection}, Timer}, mcu::ports::*};
 use crate::utils::pin::*;
 use crate::drivers::timers::settings::*;
@@ -137,9 +141,9 @@ impl<'a> Branchable for BranchA<0>{
     }
     fn set_mode(&mut self, mode:PwmMode){
         let bits= match mode {
-            PwmMode::Normal =>!((1<<Tccr0aBits::COM0A0 as u8)|(1<<Tccr0aBits::COM0A1 as u8)),
-            PwmMode::NonInverted =>!(1<<Tccr0aBits::COM0A0 as u8)&(1<<Tccr0aBits::COM0A1 as u8),
-            PwmMode::Inverted =>(1<<Tccr0aBits::COM0A0 as u8)|(1<<Tccr0aBits::COM0A1 as u8),
+            PwmMode::Normal =>Tccr0aBuilder(0).build(),
+            PwmMode::NonInverted =>Tccr0aBuilder(0).com0a1().set_bit().build(),
+            PwmMode::Inverted =>Tccr0aBuilder(0).com0a0().set_bit().com0a1().set_bit().build(),
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);
@@ -155,9 +159,9 @@ impl<'a> Branchable for BranchB<0>{
     }
     fn set_mode(&mut self, mode:PwmMode){
         let bits= match mode {
-            PwmMode::Normal =>!((1<<Tccr0aBits::COM0B0 as u8)|(1<<Tccr0aBits::COM0B1 as u8)),
-            PwmMode::NonInverted =>!(1<<Tccr0aBits::COM0B0 as u8)&(1<<Tccr0aBits::COM0B1 as u8),
-            PwmMode::Inverted =>(1<<Tccr0aBits::COM0B0 as u8)|(1<<Tccr0aBits::COM0B1 as u8),
+            PwmMode::Normal =>Tccr0aBuilder(0).build(),
+            PwmMode::NonInverted =>Tccr0aBuilder(0).com0a1().set_bit().build(),
+            PwmMode::Inverted =>Tccr0aBuilder(0).com0a0().set_bit().com0a1().set_bit().build(),
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);
@@ -174,9 +178,9 @@ impl<'a> Branchable for BranchA<1>{
     }
     fn set_mode(&mut self, mode:PwmMode){
         let bits= match mode {
-            PwmMode::Normal =>!((1<<Tccr0aBits::COM0A0 as u8)|(1<<Tccr0aBits::COM0A1 as u8)),
-            PwmMode::NonInverted =>!(1<<Tccr0aBits::COM0A0 as u8)&(1<<Tccr0aBits::COM0A1 as u8),
-            PwmMode::Inverted =>(1<<Tccr0aBits::COM0A0 as u8)|(1<<Tccr0aBits::COM0A1 as u8),
+            PwmMode::Normal =>Tccr1aBuilder(0).build(),
+            PwmMode::NonInverted =>Tccr1aBuilder(0).com1a1().set_bit().build(),
+            PwmMode::Inverted =>Tccr1aBuilder(0).com1a0().set_bit().com1a1().set_bit().build(),
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);
@@ -192,9 +196,9 @@ impl<'a> Branchable for BranchB<1>{
     }
     fn set_mode(&mut self, mode:PwmMode){
         let bits= match mode {
-            PwmMode::Normal =>!((1<<Tccr0aBits::COM0B0 as u8)|(1<<Tccr0aBits::COM0B1 as u8)),
-            PwmMode::NonInverted =>!(1<<Tccr0aBits::COM0B0 as u8)&(1<<Tccr0aBits::COM0B1 as u8),
-            PwmMode::Inverted =>(1<<Tccr0aBits::COM0B0 as u8)|(1<<Tccr0aBits::COM0B1 as u8),
+            PwmMode::Normal =>Tccr1aBuilder(0).build(),
+            PwmMode::NonInverted =>Tccr1aBuilder(0).com1b1().set_bit().build(),
+            PwmMode::Inverted =>Tccr1aBuilder(0).com1b0().set_bit().com1b1().set_bit().build(),
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);
@@ -210,9 +214,9 @@ impl<'a> Branchable for BranchA<2>{
     }
     fn set_mode(&mut self, mode:PwmMode){
         let bits= match mode {
-            PwmMode::Normal =>!((1<<Tccr0aBits::COM0A0 as u8)|(1<<Tccr0aBits::COM0A1 as u8)),
-            PwmMode::NonInverted =>!(1<<Tccr0aBits::COM0A0 as u8)&(1<<Tccr0aBits::COM0A1 as u8),
-            PwmMode::Inverted =>(1<<Tccr0aBits::COM0A0 as u8)|(1<<Tccr0aBits::COM0A1 as u8),
+            PwmMode::Normal =>Tccr2aBuilder(0).build(),
+            PwmMode::NonInverted =>Tccr2aBuilder(0).com2a1().set_bit().build(),
+            PwmMode::Inverted =>Tccr2aBuilder(0).com2a0().set_bit().com2a1().set_bit().build(),
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);
@@ -228,9 +232,9 @@ impl<'a> Branchable for BranchB<2>{
     }
     fn set_mode(&mut self, mode:PwmMode){
         let bits= match mode {
-            PwmMode::Normal =>!((1<<Tccr0aBits::COM0B0 as u8)|(1<<Tccr0aBits::COM0B1 as u8)),
-            PwmMode::NonInverted =>!(1<<Tccr0aBits::COM0B0 as u8)&(1<<Tccr0aBits::COM0B1 as u8),
-            PwmMode::Inverted =>(1<<Tccr0aBits::COM0B0 as u8)|(1<<Tccr0aBits::COM0B1 as u8),
+            PwmMode::Normal =>Tccr2aBuilder(0).build(),
+            PwmMode::NonInverted =>Tccr2aBuilder(0).com2b1().set_bit().build(),
+            PwmMode::Inverted =>Tccr2aBuilder(0).com2b0().set_bit().com2b1().set_bit().build(),
         };
         if let Some(PwmMode::Normal) = Some(&mode){
             self.settings.borrow_mut().tccra().modify(|reg| reg & bits);

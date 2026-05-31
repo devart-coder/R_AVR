@@ -1,4 +1,4 @@
-use crate::mcu::registers::*;
+use crate::mcu::registers_list::*;
 use crate::utils::register::*;
 use crate::drivers::timers::RegisterSelection;
 pub struct Action<const N:u8>where ():RegisterSelection<N> {

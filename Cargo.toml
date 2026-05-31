@@ -1,10 +1,11 @@
 [workspace]
 members = [
     "nano",
-    "blink",
-    "main"
+    "blink_test",
+    "main_test",
+    "twi_test"
 ]
-default-members = ["main"]
+default-members = ["main_test"]
 
 resolver = "3"
 [profile.dev]

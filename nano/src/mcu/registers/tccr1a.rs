@@ -37,4 +37,7 @@ impl Tccr1aBuilder{
     pub fn com1a1(self)->BitOperations<{Tccr1aBits::COM1A1},Self>{
         BitOperations::<{Tccr1aBits::COM1A1},Self>(self)
     }
+    pub fn build(self)->u8{
+        self.0
+    }
 }
