@@ -70,5 +70,43 @@ fn main() {
             return;
         }
     };
+
+    master.stop();
+    let master = match master.start() {
+        Ok(this) => {
+            uart.output().send_slice("Restart... [OK]\n");
+            this
+        }
+        Err(err) => {
+            uart.output().send_slice("Restart... [Error] ");
+            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
+            uart.output().send_slice("\n");
+            return;
+        }
+    };
+    let master = match master.send_address_with_read(BMP_180) {
+        Ok(this) => {
+            uart.output().send_slice("WriteAddressWithRead... [OK]\n");
+            this
+        }
+        Err(err) => {
+            uart.output().send_slice("WriteAddressWithRead... [Error] ");
+            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
+            uart.output().send_slice("\n");
+            return;
+        }
+    };
+    let master = match master.restart() {
+        Ok(this) => {
+            uart.output().send_slice("Restart... [OK]\n");
+            this
+        }
+        Err(err) => {
+            uart.output().send_slice("Restart... [Error] ");
+            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
+            uart.output().send_slice("\n");
+            return;
+        }
+    };
     master.stop();
 }
