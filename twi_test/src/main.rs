@@ -3,12 +3,13 @@
 use nano::{
     drivers::{
         Uart,
-        twi::twi::{PrescalerMode, Twi},
+        twi::{
+            StatusCode,
+            twi::{PrescalerMode, Twi},
+        },
     },
     mcu::pins::Pins,
 };
-
-use core::result::Result::{Err, Ok};
 
 #[unsafe(no_mangle)]
 fn main() {
@@ -22,53 +23,77 @@ fn main() {
 
     let twi = Twi::new();
     let master = twi.prescaler_mode(PrescalerMode::_1).speed(72).as_master();
-    let master = match master.start() {
+    match master.start().expect_status(StatusCode::STARTED) {
         Ok(s) => {
-            uart.output().send_slice("Start... [OK]\n");
+            uart.output().send_slice("[OK] Start\n");
             s
         }
         Err(err) => {
-            uart.output().send_slice("Start... [Error] ");
+            uart.output().send_slice("[Error] Start: ");
             uart.output().send_slice(str::from_utf8(&[err]).unwrap());
             uart.output().send_slice("\n");
             return;
         }
     };
-    let master = match master.send_address_with_write(BMP_180) {
+    match master
+        .send_address_with_write(BMP_180)
+        .expect_status(StatusCode::SLA_W_ACK)
+    {
         Ok(s) => {
-            uart.output().send_slice("AddressWrite... [OK]\n");
+            uart.output().send_slice("[OK] WriteAddress\n");
             s
         }
         Err(err) => {
-            uart.output().send_slice("AddressWrite... [Error]\n");
+            uart.output().send_slice("[Error] WriteAddress: ");
             uart.output().send_slice(str::from_utf8(&[err]).unwrap());
             uart.output().send_slice("\n");
             return;
         }
     };
-    let master = match master.write_data(0xF4) {
+    match master
+        .write_data(0xAA)
+        .expect_status(StatusCode::DATA_R_ACK)
+    {
         Ok(this) => {
-            uart.output().send_slice("WriteData... [OK]\n");
+            uart.output().send_slice("[OK] WriteData\n");
             this
         }
         Err(err) => {
-            uart.output().send_slice("WriteData... [Error] ");
+            uart.output().send_slice("[Error] WriteData: ");
             uart.output().send_slice(str::from_utf8(&[err]).unwrap());
             uart.output().send_slice("\n");
             return;
         }
     };
-    let master = match master.write_data(0x2E) {
+    match master.start().expect_status(StatusCode::START_REPEATED) {
         Ok(this) => {
-            uart.output().send_slice("WriteData... [OK]\n");
+            uart.output().send_slice("[OK] Restart\n");
             this
         }
         Err(err) => {
-            uart.output().send_slice("WriteData... [Error] ");
+            uart.output().send_slice("[Error] Restart: ");
             uart.output().send_slice(str::from_utf8(&[err]).unwrap());
             uart.output().send_slice("\n");
             return;
         }
     };
+    match master
+        .send_address_with_read(BMP_180)
+        .expect_status(StatusCode::SLA_R_ACK)
+    {
+        Ok(this) => {
+            uart.output().send_slice("[OK] SWA_R\n");
+            this
+        }
+        Err(err) => {
+            uart.output().send_slice("[Error] SWA_R: ");
+            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
+            uart.output().send_slice("\n");
+            return;
+        }
+    };
+    let result = master.read_u16();
+    uart.output().send_u16_be(result);
+    uart.output().send_slice("\n");
     master.stop();
 }

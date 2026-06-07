@@ -1,4 +1,5 @@
 use crate::{
+    drivers::twi::StatusCode,
     mcu::registers::{
         twcr::{Twcr, TwcrBuilder},
         twdr::Twdr,
@@ -24,61 +25,61 @@ impl Master {
             twsr: Twsr::new(),
         }
     }
-    fn wait_for_send(self) -> Self {
+    fn wait_for_send(&self) -> &Self {
         let value = TwcrBuilder(0).twint().set_bit().build();
         while (self.twcr.read() & value) == 0 {}
         self
     }
-    fn check_status_code(self, status: u8) -> Result<Self, u8> {
-        match self.twsr.read() & 0xF8 == status {
+    pub fn expect_status(&self, status: u8) -> Result<&Self, u8> {
+        match self.twsr.read() & 0xF8 == status as u8 {
             true => Ok(self),
             false => Err(self.twsr.read() & 0xF8),
         }
     }
-
-    pub fn start(self) -> Result<Self, u8> {
+    pub fn start(&self) -> &Self {
         self.twcr
             .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
-        self.wait_for_send().check_status_code(StatusCode::STARTED)
+        self.wait_for_send()
     }
-    pub fn stop(self) {
+    pub fn restart(&self) -> &Self {
+        self.twcr
+            .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
+        self.wait_for_send()
+    }
+    pub fn stop(&self) {
         self.twcr
             .modify(|v| v.twen().set_bit().twsto().set_bit().twint().set_bit());
     }
-    pub fn send_address_with_write(self, val: u8) -> Result<Self, u8> {
+    pub fn send_address_with_write(&self, val: u8) -> &Self {
         self.write_byte(val << 1 | Self::WRITE)
-            .check_status_code(StatusCode::SLA_W_ACK)
     }
-    pub fn send_address_with_read(self, val: u8) -> Result<Self, u8> {
+    pub fn send_address_with_read(&self, val: u8) -> &Self {
         self.write_byte(val << 1 | Self::READ)
-            .check_status_code(StatusCode::SLA_R_ACK)
     }
-    fn write_byte(self, v: u8) -> Self {
+    fn write_byte(&self, v: u8) -> &Self {
         self.twdr.write(v);
         self.twcr.modify(|v| v.twint().set_bit().twen().set_bit());
         self.wait_for_send()
     }
-    pub fn write_data(self, val: u8) -> Result<Self, u8> {
+    pub fn write_data(&self, val: u8) -> &Self {
         self.write_byte(val)
-            .check_status_code(StatusCode::DATA_RACK)
     }
-}
-pub enum StatusCode {}
-impl StatusCode {
-    const STARTED: u8 = 0x08;
-    const START_REPEATED: u8 = 0x10;
-
-    const DATA_WACK: u8 = 0x50;
-    const DATA_WNACK: u8 = 0x58;
-
-    const DATA_RACK: u8 = 0x28;
-    const DATA_RNACK: u8 = 0x30;
-
-    const SLA_W_ACK: u8 = 0x18;
-    const SLA_W_NACK: u8 = 0x20;
-
-    const SLA_R_ACK: u8 = 0x40;
-    const SLA_R_NACK: u8 = 0x48;
-
-    const LOST: u8 = 0x38;
+    pub fn read_twdr(&self) -> u8 {
+        self.twdr.read()
+    }
+    pub fn read(&self) -> &Self {
+        self.twcr
+            .modify(|b| b.twen().set_bit().twint().set_bit().twea().set_bit());
+        self.wait_for_send()
+    }
+    pub fn read_u16(&self) -> u16 {
+        let mut result = [0; 2];
+        if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_ACK) {
+            result[0] = value.read_twdr()
+        }
+        if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_ACK) {
+            result[1] = value.read_twdr();
+        }
+        u16::from_be_bytes(result)
+    }
 }
