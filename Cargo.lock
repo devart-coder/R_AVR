@@ -10,6 +10,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "bmp180"
+version = "0.1.0"
+dependencies = [
+ "nano",
+]
+
+[[package]]
 name = "main_test"
 version = "0.1.0"
 dependencies = [

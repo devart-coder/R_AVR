@@ -4,7 +4,7 @@ members = [
     "blink_test",
     "main_test",
     "twi_test"
-]
+, "bmp180"]
 default-members = ["main_test"]
 
 resolver = "3"

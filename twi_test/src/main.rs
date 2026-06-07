@@ -92,39 +92,8 @@ fn main() {
             return;
         }
     };
-    // match master.read().expect_status(StatusCode::DATA_W_ACK) {
-    //     Ok(r) => {
-    //         uart.output().send_slice("[OK] Get from 0xAA: ");
-    //         uart.output()
-    //             .send_slice(str::from_utf8(&[r.read_twdr()]).unwrap());
-    //         uart.output().send_slice("\n");
-    //     }
-    //     Err(error) => {
-    //         uart.output().send_slice("[Error] Get from 0xAA: ");
-    //         uart.output().send_slice(str::from_utf8(&[error]).unwrap());
-    //         uart.output().send_slice("\n");
-    //     }
-    // }
-    let result = master.read_array::<4>();
-    uart.output()
-        .send_slice(str::from_utf8(&[result.len() as u8]).unwrap());
-    for i in result {
-        uart.output().send_slice(str::from_utf8(&[i]).unwrap());
-        uart.output().send_slice("\n");
-    }
-    //     .expect_status(StatusCode::DATA_W_ACK); {
-    //     Ok(this) => {
-    //         uart.output().send_slice("[OK] DATA_R: ");
-    //         uart.output()
-    //             .send_slice(str::from_utf8(&[this.read_twdr()]).unwrap());
-    //         this
-    //     }
-    //     Err(err) => {
-    //         uart.output().send_slice("[Error] DATA_R: ");
-    //         uart.output().send_slice(str::from_utf8(&[err]).unwrap());
-    //         uart.output().send_slice("\n");
-    //         return;
-    //     }
-    // };
+    let result = master.read_u16();
+    uart.output().send_u16_be(result);
+    uart.output().send_slice("\n");
     master.stop();
 }

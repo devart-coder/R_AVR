@@ -72,22 +72,14 @@ impl Master {
             .modify(|b| b.twen().set_bit().twint().set_bit().twea().set_bit());
         self.wait_for_send()
     }
-    pub fn read_array<const SIZE: usize>(&self) -> [u8; SIZE] {
-        let mut result = [0; SIZE];
-        let mut index = 0;
-        while index < SIZE {
-            match self.read().expect_status(StatusCode::DATA_W_ACK) {
-                Ok(value)=> result[index] = value.read_twdr(),
-                Err(_)->(),
-            }
-            // else if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_NACK) {
-            // result[index] = value.read_twdr();
-            // break;
-            // } else {
-            // break;
-            // }
-            index += 1;
+    pub fn read_u16(&self) -> u16 {
+        let mut result = [0; 2];
+        if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_ACK) {
+            result[0] = value.read_twdr()
         }
-        result
+        if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_ACK) {
+            result[1] = value.read_twdr();
+        }
+        u16::from_be_bytes(result)
     }
 }
