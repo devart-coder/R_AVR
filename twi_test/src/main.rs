@@ -23,7 +23,7 @@ fn main() {
 
     let twi = Twi::new();
     let master = twi.prescaler_mode(PrescalerMode::_1).speed(72).as_master();
-    let master = match master.start().expect_status(StatusCode::STARTED) {
+    match master.start().expect_status(StatusCode::STARTED) {
         Ok(s) => {
             uart.output().send_slice("[OK] Start\n");
             s
@@ -35,7 +35,7 @@ fn main() {
             return;
         }
     };
-    let master = match master
+    match master
         .send_address_with_write(BMP_180)
         .expect_status(StatusCode::SLA_W_ACK)
     {
@@ -50,7 +50,7 @@ fn main() {
             return;
         }
     };
-    let master = match master
+    match master
         .write_data(0xAA)
         .expect_status(StatusCode::DATA_R_ACK)
     {
@@ -65,7 +65,7 @@ fn main() {
             return;
         }
     };
-    let master = match master.start().expect_status(StatusCode::START_REPEATED) {
+    match master.start().expect_status(StatusCode::START_REPEATED) {
         Ok(this) => {
             uart.output().send_slice("[OK] Restart\n");
             this
@@ -77,7 +77,7 @@ fn main() {
             return;
         }
     };
-    let master = match master
+    match master
         .send_address_with_read(BMP_180)
         .expect_status(StatusCode::SLA_R_ACK)
     {
@@ -92,71 +92,39 @@ fn main() {
             return;
         }
     };
-    let master = match master.read_with_ack().expect_status(StatusCode::DATA_W_ACK) {
-        Ok(this) => {
-            uart.output().send_slice("[OK] DATA_R: ");
-            uart.output()
-                .send_slice(str::from_utf8(&[this.read_twdr()]).unwrap());
-            this
-        }
-        Err(err) => {
-            uart.output().send_slice("[Error] DATA_R: ");
-            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
-            uart.output().send_slice("\n");
-            return;
-        }
-    };
-    let master = match master.read_with_ack().expect_status(StatusCode::DATA_W_ACK) {
-        Ok(this) => {
-            uart.output().send_slice("[OK] DATA_R: ");
-            uart.output()
-                .send_slice(str::from_utf8(&[this.read_twdr()]).unwrap());
-            this
-        }
-        Err(err) => {
-            uart.output().send_slice("[Error] DATA_R: ");
-            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
-            uart.output().send_slice("\n");
-            return;
-        }
-    };
-
-    master.stop();
-    let master = match master.start() {
-        Ok(this) => {
-            uart.output().send_slice("Restart... [OK]\n");
-            this
-        }
-        Err(err) => {
-            uart.output().send_slice("Restart... [Error] ");
-            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
-            uart.output().send_slice("\n");
-            return;
-        }
-    };
-    let master = match master.send_address_with_read(BMP_180) {
-        Ok(this) => {
-            uart.output().send_slice("WriteAddressWithRead... [OK]\n");
-            this
-        }
-        Err(err) => {
-            uart.output().send_slice("WriteAddressWithRead... [Error] ");
-            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
-            uart.output().send_slice("\n");
-            return;
-        }
-    };
-    let master = match master.restart() {
-        Ok(this) => {
-            uart.output().send_slice("Restart... [OK]\n");
-            this
-        }
-        Err(err) => {
-            uart.output().send_slice("Restart... [Error] ");
-            uart.output().send_slice(str::from_utf8(&[err]).unwrap());
-            uart.output().send_slice("\n");
-            return;
-        }
-    };
+    // match master.read().expect_status(StatusCode::DATA_W_ACK) {
+    //     Ok(r) => {
+    //         uart.output().send_slice("[OK] Get from 0xAA: ");
+    //         uart.output()
+    //             .send_slice(str::from_utf8(&[r.read_twdr()]).unwrap());
+    //         uart.output().send_slice("\n");
+    //     }
+    //     Err(error) => {
+    //         uart.output().send_slice("[Error] Get from 0xAA: ");
+    //         uart.output().send_slice(str::from_utf8(&[error]).unwrap());
+    //         uart.output().send_slice("\n");
+    //     }
+    // }
+    let result = master.read_array::<4>();
+    uart.output()
+        .send_slice(str::from_utf8(&[result.len() as u8]).unwrap());
+    for i in result {
+        uart.output().send_slice(str::from_utf8(&[i]).unwrap());
+        uart.output().send_slice("\n");
+    }
+    //     .expect_status(StatusCode::DATA_W_ACK); {
+    //     Ok(this) => {
+    //         uart.output().send_slice("[OK] DATA_R: ");
+    //         uart.output()
+    //             .send_slice(str::from_utf8(&[this.read_twdr()]).unwrap());
+    //         this
+    //     }
+    //     Err(err) => {
+    //         uart.output().send_slice("[Error] DATA_R: ");
+    //         uart.output().send_slice(str::from_utf8(&[err]).unwrap());
+    //         uart.output().send_slice("\n");
+    //         return;
+    //     }
+    // };
     master.stop();
 }

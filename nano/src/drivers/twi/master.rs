@@ -25,23 +25,23 @@ impl Master {
             twsr: Twsr::new(),
         }
     }
-    fn wait_for_send(self) -> Self {
+    fn wait_for_send(&self) -> &Self {
         let value = TwcrBuilder(0).twint().set_bit().build();
         while (self.twcr.read() & value) == 0 {}
         self
     }
-    pub fn expect_status(self, status: u8) -> Result<Self, u8> {
+    pub fn expect_status(&self, status: u8) -> Result<&Self, u8> {
         match self.twsr.read() & 0xF8 == status as u8 {
             true => Ok(self),
             false => Err(self.twsr.read() & 0xF8),
         }
     }
-    pub fn start(self) -> Self {
+    pub fn start(&self) -> &Self {
         self.twcr
             .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
         self.wait_for_send()
     }
-    pub fn restart(self) -> Self {
+    pub fn restart(&self) -> &Self {
         self.twcr
             .modify(|v| v.twen().set_bit().twsta().set_bit().twint().set_bit());
         self.wait_for_send()
@@ -50,34 +50,44 @@ impl Master {
         self.twcr
             .modify(|v| v.twen().set_bit().twsto().set_bit().twint().set_bit());
     }
-    pub fn send_address_with_write(self, val: u8) -> Self {
+    pub fn send_address_with_write(&self, val: u8) -> &Self {
         self.write_byte(val << 1 | Self::WRITE)
     }
-    pub fn send_address_with_read(self, val: u8) -> Self {
+    pub fn send_address_with_read(&self, val: u8) -> &Self {
         self.write_byte(val << 1 | Self::READ)
     }
-    fn write_byte(self, v: u8) -> Self {
+    fn write_byte(&self, v: u8) -> &Self {
         self.twdr.write(v);
         self.twcr.modify(|v| v.twint().set_bit().twen().set_bit());
         self.wait_for_send()
     }
-    pub fn write_data(self, val: u8) -> Self {
+    pub fn write_data(&self, val: u8) -> &Self {
         self.write_byte(val)
     }
     pub fn read_twdr(&self) -> u8 {
         self.twdr.read()
     }
-    pub fn read_with_ack(self) -> Self {
+    pub fn read(&self) -> &Self {
         self.twcr
             .modify(|b| b.twen().set_bit().twint().set_bit().twea().set_bit());
         self.wait_for_send()
     }
-    pub fn read_with_nack(self) -> u8 {
-        self.twcr.modify(|b| b.twen().set_bit().twint().set_bit());
-        self.wait_for_send().twdr.read()
-    }
-    pub fn read_array<const SIZE: usize>(&self) -> [usize; SIZE] {
-        let result = [0; SIZE];
+    pub fn read_array<const SIZE: usize>(&self) -> [u8; SIZE] {
+        let mut result = [0; SIZE];
+        let mut index = 0;
+        while index < SIZE {
+            match self.read().expect_status(StatusCode::DATA_W_ACK) {
+                Ok(value)=> result[index] = value.read_twdr(),
+                Err(_)->(),
+            }
+            // else if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_NACK) {
+            // result[index] = value.read_twdr();
+            // break;
+            // } else {
+            // break;
+            // }
+            index += 1;
+        }
         result
     }
 }
