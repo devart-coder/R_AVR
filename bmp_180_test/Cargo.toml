@@ -1,0 +1,9 @@
+[package]
+name = "bmp_180_test"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+nano = {path = "../nano"}
+bmp_180 = {path = "../bmp_180"}

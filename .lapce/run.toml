@@ -16,7 +16,18 @@ args = ["+nightly","build","-p","main"]
    "+nightly","build",
  ]
 
-[[configs]]
+ [[configs]]
+ name = "Build bmp_180"
+ program = "cargo"
+ args = ["+nightly","build","-p","bmp_180"]
+
+ [configs.prelaunch]
+  program = "cargo"
+  args = [
+    "+nightly","build",
+  ]
+
+  [[configs]]
 name = "flash blink"
 program = "cargo"
 args = ["+nightly","run","-p", "blink"]
@@ -33,9 +44,9 @@ cwd = "${workspace}"
 # program = "avr-objcopy"
 # # Аргументы: извлекаем секции .text и .data и конвертируем в ihex
 # args = [
-#     "-O", "ihex", 
-#     "-j", ".text", 
-#     "-j", ".data", 
+#     "-O", "ihex",
+#     "-j", ".text",
+#     "-j", ".data",
 #     "target/avr-atmega328p/debug/main", # Путь к вашему elf
 #     # "target/avr-atmega328p/debug/main"  # Путь к итоговому hex
 # ]

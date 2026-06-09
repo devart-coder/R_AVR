@@ -41,6 +41,9 @@ impl Output {
             value /= 10;
         }
     }
+    pub fn send_number(&self, value: u8) {
+        self.send_slice(str::from_utf8(&[value as u8]).unwrap());
+    }
     pub fn send_bool(&self, value: bool) {
         let result = match value {
             true => "true",
