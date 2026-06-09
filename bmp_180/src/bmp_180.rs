@@ -13,38 +13,25 @@ use nano::{
 };
 
 pub struct Bmp180 {
-    pub ac1: i16,
-    pub ac2: i16,
-    pub ac3: i16,
-    pub ac4: u16,
-    pub ac5: u16,
-    pub ac6: u16,
-    pub b1: i16,
-    pub b2: i16,
-    pub mb: i16,
-    pub mc: i16,
-    pub md: i16,
+    pub ac_p1: [i16; 3],
+    pub ac_p2: [u16; 3],
+    pub b: [i16; 2],
+    pub m: [i16; 3],
     pub twi: Master,
 }
 impl Bmp180 {
     const BMP_180: u8 = 0x77;
+    const CALIBRATION_SIZE: usize = 11;
     pub fn new(mode: PrescalerMode, speed: u8) -> Self {
         Self {
             twi: Twi::new().prescaler_mode(mode).speed(speed).as_master(),
-            ac1: 0,
-            ac2: 0,
-            ac3: 0,
-            ac4: 0,
-            ac5: 0,
-            ac6: 0,
-            b1: 0,
-            b2: 0,
-            mb: 0,
-            mc: 0,
-            md: 0,
+            ac_p1: [0; 3],
+            ac_p2: [0; 3],
+            b: [0; 2],
+            m: [0; 3],
         }
     }
-    fn read_from_reg_u16(&self, address: u8) -> u16 {
+    fn to_read_init(&self, address: u8) {
         let uart = Uart::get();
         uart.settings().default();
         match self.twi.start().expect_status(StatusCode::STARTED) {
@@ -95,7 +82,6 @@ impl Bmp180 {
                 uart.output().send_slice("\n");
             }
         }
-
         match self
             .twi
             .send_address_with_read(Self::BMP_180)
@@ -110,17 +96,71 @@ impl Bmp180 {
                 uart.output().send_slice("\n");
             }
         }
-        //Todo::Read_Registers;
-        // let result = self.twi.read_u16();
-        // self.twi.stop();
-        // delay_ms(500);
-        result
     }
+    fn read_reg_from(&self, address: u8) -> u16 {
+        let uart = Uart::get();
+        uart.settings().default();
+        self.to_read_init(address);
+        let mut result: [u8; 2] = [0; 2];
+        if let Ok(v) = self.twi.read().expect_status(StatusCode::DATA_W_ACK) {
+            result[0] = v.read_twdr();
+        }
+        if let Ok(v) = self.twi.read().expect_status(StatusCode::DATA_W_ACK) {
+            result[1] = v.read_twdr();
+        }
+        self.twi.stop();
+        u16::from_be_bytes(result)
+    }
+
+    fn read_array(&mut self, address: u8) {
+        let uart = Uart::get();
+        uart.settings().default();
+        self.to_read_init(address);
+
+        for index in (1..=10) {
+            uart.output().send_slice("[Index] ");
+            uart.output().send_u8(index as u8);
+            uart.output().send_slice("\n");
+            match index {
+                4..=6 => {
+                    self.ac_p2[index] = match self.twi.read().expect_status(StatusCode::DATA_W_ACK)
+                    {
+                        Ok(this) => {
+                            uart.output().send_slice("[Ok] RegisterReaded\n");
+                            this.read_u16()
+                        }
+                        Err(err) => {
+                            uart.output().send_slice("[Error] StatusCode: ");
+                            uart.output().send_u8(err);
+                            uart.output().send_slice("\n");
+                            return;
+                        }
+                    };
+                }
+                _ => {
+                    let res = match self.twi.read().expect_status(StatusCode::DATA_R_ACK) {
+                        Ok(this) => {
+                            uart.output().send_slice("[Ok] RegisterReaded\n");
+                            this.read_u16()
+                        }
+                        Err(err) => {
+                            uart.output().send_slice("[Error] StatusCode: ");
+                            uart.output().send_u8(err);
+                            uart.output().send_slice("\n");
+                            return;
+                        }
+                    };
+                }
+            }
+        }
+    }
+
     pub fn calibration(&mut self) {
+        self.read_array(0xAA);
         // let mut offset = 0;
-        self.ac4 = self.read_from_reg_u16(0xAA + 4 * 2);
-        self.ac5 = self.read_from_reg_u16(0xAA + 5 * 2);
-        self.ac6 = self.read_from_reg_u16(0xAA + 6 * 2);
+        // self.ac_p2[0] = self.read_reg_from(0xAA);
+        // self.ac_p2[1] = self.read_reg_from(0xAA + 4 * 2);
+        // self.ac_p2[2] = self.read_reg_from(0xAA + 5 * 2);
         // for address in (0xAA..=0xBE).step_by(2) {
         // offset += 1;
         // let mut register = match offset {
@@ -144,4 +184,14 @@ impl Bmp180 {
         // }
         // }
     }
+}
+struct ArrayWrapper {}
+impl ArrayWrapper {
+    pub fn from_address(self, Address: u8) -> Self {
+        self
+    }
+    pub fn size<const SIZE: usize>(self) -> Self {
+        self
+    }
+    fn result(&self) {}
 }

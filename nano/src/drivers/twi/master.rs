@@ -74,12 +74,8 @@ impl Master {
     }
     pub fn read_u16(&self) -> u16 {
         let mut result = [0; 2];
-        if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_ACK) {
-            result[0] = value.read_twdr()
-        }
-        if let Ok(value) = self.read().expect_status(StatusCode::DATA_W_ACK) {
-            result[1] = value.read_twdr();
-        }
+        result[0] = self.read().read_twdr();
+        result[1] = self.read().read_twdr();
         u16::from_be_bytes(result)
     }
 }
