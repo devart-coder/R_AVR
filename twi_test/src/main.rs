@@ -93,7 +93,7 @@ fn main() {
         }
     };
     let result = master.read_u16();
-    uart.output().send_u16_be(result);
+    uart.output().send_number(result);
     uart.output().send_slice("\n");
     master.stop();
 }

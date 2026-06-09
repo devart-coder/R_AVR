@@ -67,15 +67,13 @@ impl Master {
     pub fn read_twdr(&self) -> u8 {
         self.twdr.read()
     }
-    pub fn read(&self) -> &Self {
+    pub fn read_ack(&self) -> &Self {
         self.twcr
             .modify(|b| b.twen().set_bit().twint().set_bit().twea().set_bit());
         self.wait_for_send()
     }
-    pub fn read_u16(&self) -> u16 {
-        let mut result = [0; 2];
-        result[0] = self.read().read_twdr();
-        result[1] = self.read().read_twdr();
-        u16::from_be_bytes(result)
+    pub fn read_nack(&self) -> &Self {
+        self.twcr.modify(|b| b.twen().set_bit().twint().set_bit());
+        self.wait_for_send()
     }
 }
