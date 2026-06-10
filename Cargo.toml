@@ -3,8 +3,9 @@ members = [
     "nano",
     "blink_test",
     "main_test",
-    "twi_test"
-, "bmp180"]
+    "twi_test",
+    "bmp_180",
+    "bmp_180_test"]
 default-members = ["main_test"]
 
 resolver = "3"

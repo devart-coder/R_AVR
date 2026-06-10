@@ -2,7 +2,6 @@ use crate::{
     drivers::twi::master::Master,
     mcu::registers::{twbr::Twbr, twsr::Twsr},
 };
-
 pub struct Twi {
     twsr: Twsr,
     twbr: Twbr,

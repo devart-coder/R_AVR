@@ -1,8 +1,9 @@
 [package]
-name = "main_test"
+name = "bmp_180_test"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-itoa = "1.0.18"
+
 nano = {path = "../nano"}
+bmp_180 = {path = "../bmp_180"}
