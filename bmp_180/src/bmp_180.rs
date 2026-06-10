@@ -35,107 +35,69 @@ impl Bmp180 {
         {
             self.twi
                 .start()
-                .expect_status(StatusCode::STARTED)
-                .unwrap()
                 .send_address_with_write(Self::BMP_180)
-                .expect_status(StatusCode::SLA_W_ACK)
-                .unwrap()
                 .write_data(address)
-                .expect_status(StatusCode::DATA_R_ACK)
-                .unwrap()
                 .start()
-                .expect_status(StatusCode::START_REPEATED)
-                .unwrap()
                 .send_address_with_read(Self::BMP_180)
-                .expect_status(StatusCode::SLA_R_ACK)
-                .unwrap();
         }
         #[cfg(debug_assertions)]
         {
             let uart = Uart::get();
-            uart.settings().default();
-
-            match self.twi.start().expect_status(StatusCode::STARTED) {
-                Ok(ok) => {
-                    uart.output().send_slice("[Ok] start\n");
-                }
-                Err(err) => {
-                    uart.output().send_slice("[Error] StatusCode: ");
-                    uart.output().send_number(err);
-                    uart.output().send_slice("\n");
-                }
+            if let Err(err) = self.twi.start().expect_status(StatusCode::STARTED) {
+                uart.output().send_slice("[Error] StatusCode: ");
+                uart.output().send_number(err);
+                uart.output().send_slice("\n");
             };
-            match self
+            if let Err(err) = self
                 .twi
                 .send_address_with_write(Self::BMP_180)
                 .expect_status(StatusCode::SLA_W_ACK)
             {
-                Ok(ok) => {
-                    uart.output().send_slice("[Ok] AddressWrite\n");
-                }
-                Err(err) => {
-                    uart.output().send_slice("[Error] StatusCode: ");
-                    uart.output().send_number(err);
-                    uart.output().send_slice("\n");
-                }
+                uart.output().send_slice("[Error] StatusCode: ");
+                uart.output().send_number(err);
+                uart.output().send_slice("\n");
             }
-            match self
+            if let Err(err) = self
                 .twi
                 .write_data(address)
-                .expect_status(StatusCode::DATA_R_ACK)
+                .expect_status(StatusCode::DATA_W_ACK)
             {
-                Ok(ok) => {
-                    uart.output().send_slice("[Ok] DataWrite\n");
-                }
-                Err(err) => {
-                    uart.output().send_slice("[Error] StatusCode: ");
-                    uart.output().send_number(err);
-                    uart.output().send_slice("\n");
-                }
+                uart.output().send_slice("[Error] StatusCode: ");
+                uart.output().send_number(err);
+                uart.output().send_slice("\n");
             }
-            match self.twi.start().expect_status(StatusCode::START_REPEATED) {
-                Ok(ok) => {
-                    uart.output().send_slice("[Ok] Restart\n");
-                }
-                Err(err) => {
-                    uart.output().send_slice("[Error] StatusCode: ");
-                    uart.output().send_number(err);
-                    uart.output().send_slice("\n");
-                }
+            if let Err(err) = self.twi.start().expect_status(StatusCode::START_REPEATED) {
+                uart.output().send_slice("[Error] StatusCode: ");
+                uart.output().send_number(err);
+                uart.output().send_slice("\n");
             }
-            match self
+            if let Err(err) = self
                 .twi
                 .send_address_with_read(Self::BMP_180)
                 .expect_status(StatusCode::SLA_R_ACK)
             {
-                Ok(ok) => {
-                    uart.output().send_slice("[Ok] AddressToRead\n");
-                }
-                Err(err) => {
-                    uart.output().send_slice("[Error] StatusCode: ");
-                    uart.output().send_number(err);
-                    uart.output().send_slice("\n");
-                }
+                uart.output().send_slice("[Error] StatusCode: ");
+                uart.output().send_number(err);
+                uart.output().send_slice("\n");
             }
         }
     }
-    fn read_reg_from(&mut self, address: u8) -> u16 {
+    pub fn read_reg_from(&mut self, address: u8) -> u16 {
         self.to_read_init(address);
         let mut result: [u8; 2] = [0; 2];
         #[cfg(not(debug_assertions))]
         {
-            if let Ok(v) = self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            if let Ok(v) = self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 result[0] = v.read_twdr();
             }
-            if let Ok(v) = self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            if let Ok(v) = self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 result[1] = v.read_twdr();
             }
         }
         #[cfg(debug_assertions)]
         {
             let uart = Uart::get();
-            uart.settings().default();
-            match self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            match self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 Ok(this) => result[0] = this.read_twdr(),
                 Err(err) => {
                     uart.output().send_slice("[Error] StatusCode: ");
@@ -143,7 +105,7 @@ impl Bmp180 {
                     uart.output().send_slice("\n");
                 }
             }
-            match self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            match self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 Ok(this) => result[1] = this.read_twdr(),
                 Err(err) => {
                     uart.output().send_slice("[Error] StatusCode: ");
@@ -160,7 +122,7 @@ impl Bmp180 {
         #[cfg(debug_assertions)]
         {
             let uart = Uart::get();
-            match self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            match self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 Ok(this) => {
                     result[0] = this.read_twdr();
                 }
@@ -170,7 +132,7 @@ impl Bmp180 {
                     uart.output().send_slice("\n");
                 }
             };
-            match self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            match self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 Ok(this) => {
                     result[1] = this.read_twdr();
                 }
@@ -183,16 +145,16 @@ impl Bmp180 {
         }
         #[cfg(not(debug_assertions))]
         {
-            if let Ok(this) = self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            if let Ok(this) = self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 result[0] = this.read_twdr();
             };
-            if let Ok(this) = self.twi.read_ack().expect_status(StatusCode::DATA_W_ACK) {
+            if let Ok(this) = self.twi.read_ack().expect_status(StatusCode::DATA_R_ACK) {
                 result[1] = this.read_twdr();
             };
         }
         u16::from_be_bytes(result)
     }
-    pub fn calibration(&mut self) {
+    pub fn calibration(&mut self) -> &mut Self {
         self.to_read_init(0xAA);
         for index in 1..=11 {
             match index {
@@ -212,5 +174,72 @@ impl Bmp180 {
             }
         }
         self.twi.stop();
+        self
+    }
+    pub fn read_temperature(&mut self) -> f32 {
+        self.write_to_reg(0xF4, 0x2E);
+        delay_ms(5);
+        let ut = self.read_reg_from(0xF6);
+        #[cfg(debug_assertions)]
+        {
+            let uart = Uart::get();
+            uart.output()
+                .send_slice("[UT] = ")
+                .send_number(ut)
+                .send_slice_ln("");
+        }
+        self.calc_temperature(ut)
+    }
+    fn write_to_reg(&mut self, address: u8, value: u8) {
+        #[cfg(debug_assertions)]
+        {
+            let uart = Uart::get();
+            if let Err(err) = self.twi.start().expect_status(StatusCode::START_REPEATED) {
+                uart.output()
+                    .send_slice("[Error] StatusCode ")
+                    .send_number(err)
+                    .send_slice_ln(" ");
+            }
+            if let Err(err) = self
+                .twi
+                .send_address_with_write(Self::BMP_180)
+                .expect_status(StatusCode::SLA_W_ACK)
+            {
+                uart.output()
+                    .send_slice("[Error] StatusCode ")
+                    .send_number(err)
+                    .send_slice_ln(" ");
+            }
+            if let Err(err) = self
+                .twi
+                .write_data(address)
+                .expect_status(StatusCode::DATA_W_ACK)
+            {
+                uart.output()
+                    .send_slice("[Error] StatusCode ")
+                    .send_number(err)
+                    .send_slice_ln(" ");
+            }
+            if let Err(err) = self
+                .twi
+                .write_data(value)
+                .expect_status(StatusCode::DATA_W_ACK)
+            {
+                uart.output()
+                    .send_slice("[Error] StatusCode ")
+                    .send_number(err)
+                    .send_slice_ln("");
+            }
+            self.twi.stop();
+        }
+        #[cfg(not(debug_assertions))]
+        {}
+    }
+    fn calc_temperature(&self, ut: u16) -> f32 {
+        let x1: i32 = ((ut as i32) - (self.ac_p2[2] as i32)) * (self.ac_p2[1] as i32) >> 15;
+        let x2: i32 = ((self.m[1] as i32) << 11) / (x1 + self.m[2] as i32);
+        let b5 = x1 + x2;
+        let t = (b5 + 8) >> 4;
+        (t as f32) / 10.0
     }
 }
