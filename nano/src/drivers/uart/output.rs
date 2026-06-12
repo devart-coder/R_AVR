@@ -15,9 +15,9 @@ impl Output {
         self.send_bytes(string.as_bytes())
     }
     pub fn send_bytes(&self, bytes: &[u8]) -> &Self {
-        for byte in bytes {
+        for &byte in bytes {
             while (self.ucsr0a.read() & (1 << Ucsr0aBits::UDRE0 as u8)) == 0 {}
-            self.udr0.write(*byte);
+            self.udr0.write(byte);
         }
         self
     }

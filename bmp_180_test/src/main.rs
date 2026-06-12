@@ -13,11 +13,22 @@ fn main() {
     let mut bmp = Bmp180::new(PrescalerMode::_1, 72);
     bmp.calibration();
     loop {
-        let result = bmp.read_temperature();
+        let t = bmp.read_temperature();
+        let p = bmp.read_pressure(0);
+        let mm_hg_x10 = (p * 100) / 13332;
+        let p_whole = mm_hg_x10;
+        // let p_fract = mm_hg_x10 % 10;
         uart.output()
-            .send_slice("[T] = ")
-            .send_number(result as i32)
-            .send_slice_ln("");
-        delay_ms(2000);
+            .send_slice("[Temperature] = ")
+            .send_number(t as i32)
+            .send_slice_ln(" C")
+            .send_slice("[Pressure] = ")
+            .send_number(p)
+            .send_slice(" P ( ")
+            .send_number(p_whole)
+            // .send_slice(".")
+            // .send_number(p_fract)
+            .send_slice_ln(" mmHg )");
+        delay_ms(5000);
     }
 }

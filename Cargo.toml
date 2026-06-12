@@ -7,9 +7,10 @@ members = [
     "bmp_180",
     "bmp_180_test"]
 default-members = ["main_test"]
-
 resolver = "3"
+
 [profile.dev]
+overflow-checks = true # Включить проверку переполнений чисел
 panic = "abort"
 lto = true
 opt-level = "s"
@@ -17,6 +18,7 @@ opt-level = "s"
 [profile.release]
 panic = "abort"
 lto = true
-opt-level = "s"
+opt-level = 2
+
 [unstable]
 json-target-spec = true
