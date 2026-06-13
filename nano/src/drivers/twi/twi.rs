@@ -1,4 +1,5 @@
 use crate::{
+    F_CPU,
     drivers::twi::master::Master,
     mcu::registers::{twbr::Twbr, twsr::Twsr},
 };
@@ -13,8 +14,11 @@ impl Twi {
             twbr: Twbr::new(),
         }
     }
-    pub fn speed(self, value: u8) -> Self {
-        self.twbr.write(value);
+    pub fn speed(self, value: u32) -> Self {
+        let value = F_CPU
+            .wrapping_sub(value.wrapping_mul(16))
+            .wrapping_div(value.wrapping_mul(2) /*.wrapping_mul()*/);
+        self.twbr.write(value as u8);
         self
     }
     pub fn prescaler_mode(self, mode: PrescalerMode) -> Self {

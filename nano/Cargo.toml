@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2024"
 [dependencies]
 itoa = "1.0"
+ufmt = "0.2"
+ufmt_float = "0.1.0"
+heapless = { version = "0.8", features = ["ufmt"] }

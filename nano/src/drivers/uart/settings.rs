@@ -11,12 +11,13 @@ pub struct Settings {
 }
 impl Settings {
     pub const fn new() -> Self {
-        Settings {
+        let settings = Settings {
             ucsr0c: Register::new(UartRegisters::UCSR0C as u8),
             ubrr0h: Register::new(UartRegisters::UBRR0H as u8),
             ubrr0l: Register::new(UartRegisters::UBRR0L as u8),
             interrupt: Interrupt::new(),
-        }
+        };
+        settings
     }
     pub fn double_speed(&self, value: bool) -> &Self {
         let ucsr0a = Register::new(UartRegisters::UCSR0A as u8);

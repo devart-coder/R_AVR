@@ -1,23 +1,33 @@
-use core::arch::asm;
 use super::drivers::uart::uart::Uart;
 use crate::drivers::timers::timer::*;
-pub fn sei(){ unsafe{ asm!("sei"); } }
-pub fn cli(){ unsafe{ asm!("cli"); } }
+use core::arch::asm;
+pub fn sei() {
+    unsafe {
+        asm!("sei");
+    }
+}
+pub fn cli() {
+    unsafe {
+        asm!("cli");
+    }
+}
 
 #[unsafe(no_mangle)]
-pub extern "avr-interrupt" fn __vector_18(){//UART_RX_COMPLETE
-    Uart::get().interrupt.handle_rx();
+pub extern "avr-interrupt" fn __vector_18() {
+    //UART_RX_COMPLETE
+    Uart::get().interrupt().handle_rx();
 }
 #[unsafe(no_mangle)]
-pub extern "avr-interrupt" fn __vector_19(){//UART_DRE
+pub extern "avr-interrupt" fn __vector_19() { //UART_DRE
 }
 #[unsafe(no_mangle)]
-pub extern "avr-interrupt" fn __vector_20(){//UART_TX_COMPLETE
-    Uart::get().interrupt.handle_tx();
+pub extern "avr-interrupt" fn __vector_20() {
+    //UART_TX_COMPLETE
+    Uart::get().interrupt().handle_tx();
 }
 //---TIMER_2---//
 // pub extern "avr-interrupt" fn __vector_7(){//TIMER2_COMPA
-    // TIMER_2.callback.channal_a_callback().unwrap();
+// TIMER_2.callback.channal_a_callback().unwrap();
 // }
 // pub extern "avr-interrupt" fn __vector_8(){//TIMER2_COMPB
 //     TIMER_2.callback.channal_b_callback();
@@ -33,21 +43,22 @@ pub extern "avr-interrupt" fn __vector_20(){//UART_TX_COMPLETE
 //     TIMER_1.callback.channal_b_callback();
 
 // }
-pub extern "avr-interrupt" fn __vector_12(){//TIMER1_COMPB
+pub extern "avr-interrupt" fn __vector_12() { //TIMER1_COMPB
 }
-pub extern "avr-interrupt" fn __vector_13(){//TIMER1_OVF
-
+pub extern "avr-interrupt" fn __vector_13() { //TIMER1_OVF
 }
 #[unsafe(no_mangle)]
-pub extern "avr-interrupt" fn __vector_14(){//TIMER0_COMPA
-    if let Some(f) = Timer::<0>::get().callback().channal_a_callback(){
+pub extern "avr-interrupt" fn __vector_14() {
+    //TIMER0_COMPA
+    if let Some(f) = Timer::<0>::get().callback().channal_a_callback() {
         f();
     }
 }
 #[unsafe(no_mangle)]
-pub extern "avr-interrupt" fn __vector_15(){//TIMER0_COMPB
-    if let Some(f) = Timer::<0>::get().callback().channal_b_callback(){
-            f();
+pub extern "avr-interrupt" fn __vector_15() {
+    //TIMER0_COMPB
+    if let Some(f) = Timer::<0>::get().callback().channal_b_callback() {
+        f();
     }
 }
 // pub extern "avr-interrupt" fn __vector_16(){//TIMER0_OVF

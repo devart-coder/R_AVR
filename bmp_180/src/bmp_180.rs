@@ -22,17 +22,21 @@ pub struct Bmp180 {
 }
 impl Bmp180 {
     const BMP_180: u8 = 0x77;
-    pub fn new(mode: PrescalerMode, speed: u8) -> Self {
-        Self {
-            twi: Twi::new().prescaler_mode(mode).speed(speed).as_master(),
+    pub fn new(speed: u32) -> Self {
+        let mut this = Self {
+            twi: Twi::new()
+                .prescaler_mode(PrescalerMode::_1)
+                .speed(speed)
+                .as_master(),
             ac_p1: [0; 3],
             ac_p2: [0; 3],
             b: [0; 2],
             m: [0; 3],
             b5: i32::default(),
-        }
+        };
+        this.calibration();
+        this
     }
-
     fn to_read_init(&self, address: u8) {
         let uart = Uart::get();
         if let Err(err) = self.twi.start().expect_status(StatusCode::STARTED) {
@@ -73,12 +77,6 @@ impl Bmp180 {
             uart.output().send_slice("\n");
         }
     }
-
-    pub fn read_reg_from(&mut self, address: u8) -> u16 {
-        self.to_read_init(address);
-        self.read_u16()
-    }
-
     fn read_u16(&self) -> u16 {
         let mut result = [0; 2];
         let uart = Uart::get();
@@ -103,63 +101,6 @@ impl Bmp180 {
             }
         };
         u16::from_be_bytes(result)
-    }
-
-    pub fn calibration(&mut self) -> &mut Self {
-        self.to_read_init(0xAA);
-        for index in 1..=11 {
-            match index {
-                4..=6 => {
-                    self.ac_p2[index - 4] = self.read_u16();
-                }
-                1..=3 => {
-                    self.ac_p1[index - 1] = self.read_u16() as i16;
-                }
-                7..=8 => {
-                    self.b[index - 7] = self.read_u16() as i16;
-                }
-                9..=11 => {
-                    self.m[index - 9] = self.read_u16() as i16;
-                }
-                _ => {}
-            }
-        }
-        self.twi.stop();
-        self
-    }
-    #[inline(always)]
-    pub fn read_temperature(&mut self) -> i32 {
-        self.write_to_reg(0xF4, 0x2E);
-        delay_ms(5);
-        let ut = self.read_reg_from(0xF6);
-        // self.write_to_reg(0xF4, 0x34);
-        // delay_ms(5);
-        // let up = self.read_reg_from(0xF6);
-
-        #[cfg(debug_assertions)]
-        {
-            let uart = Uart::get();
-            uart.output()
-                .send_slice("[UT] = ")
-                .send_number(ut)
-                .send_slice_ln("");
-        }
-        self.temp_calc(ut)
-    }
-    pub fn read_pressure(&mut self, oss: u8) -> i32 {
-        self.write_to_reg(0xF4, 0x34);
-        delay_ms(5);
-        let up = self.read_reg_from(0xF6);
-
-        #[cfg(debug_assertions)]
-        {
-            let uart = Uart::get();
-            uart.output()
-                .send_slice("[UP] = ")
-                .send_number(up)
-                .send_slice_ln("");
-        }
-        self.pressure_calc(up, oss)
     }
     fn write_to_reg(&mut self, address: u8, value: u8) {
         let uart = Uart::get();
@@ -201,7 +142,7 @@ impl Bmp180 {
         }
         self.twi.stop();
     }
-    fn temp_calc(&mut self, ut: u16) -> i32 {
+    fn temp_calc(&mut self, ut: u16) -> f32 {
         let x1: i32 = ((ut as i32).wrapping_sub(self.ac_p2[2] as i32))
             .wrapping_mul((self.ac_p2[1] as i32))
             / 32768;
@@ -209,9 +150,9 @@ impl Bmp180 {
         let x2: i32 = ((self.m[1] as i32) << 11).checked_div(d).unwrap_or(0);
         self.b5 = x1.wrapping_add(x2);
         let t = self.b5.wrapping_add(8).wrapping_div(16);
-        (t as f32).div(10.0) as i32
+        (t as f32).div(10.0)
     }
-    pub fn pressure_calc(&self, up: u16, oss: u8) -> i32 {
+    fn pressure_calc(&self, up: u16, oss: u8) -> i32 {
         let b6: i32 = self.b5.wrapping_sub(4000);
         let x1 = ((self.b[1] as i32).wrapping_mul(b6.wrapping_mul(b6) / 4096)) / 2048;
         let x2 = (self.ac_p1[1] as i32).wrapping_mul(b6) / 2048;
@@ -240,5 +181,77 @@ impl Bmp180 {
         let x2 = p.wrapping_mul(-7357) >> 16;
         p = p.wrapping_add(x1.wrapping_add(x2).wrapping_add(3791) >> 4);
         p
+    }
+    fn read_reg_from(&mut self, address: u8) -> u16 {
+        self.to_read_init(address);
+        self.read_u16()
+    }
+    fn calibration(&mut self) -> &mut Self {
+        self.to_read_init(0xAA);
+        for index in 1..=11 {
+            match index {
+                4..=6 => {
+                    self.ac_p2[index - 4] = self.read_u16();
+                }
+                1..=3 => {
+                    self.ac_p1[index - 1] = self.read_u16() as i16;
+                }
+                7..=8 => {
+                    self.b[index - 7] = self.read_u16() as i16;
+                }
+                9..=11 => {
+                    self.m[index - 9] = self.read_u16() as i16;
+                }
+                _ => {}
+            }
+        }
+        self.twi.stop();
+        self
+    }
+    pub fn set_prescaler(&self, mode: PrescalerMode) -> &Self {
+        //todo!()
+        self
+    }
+    pub fn read_temperature(&mut self) -> f32 {
+        self.write_to_reg(0xF4, 0x2E);
+        delay_ms(5);
+        let ut = self.read_reg_from(0xF6);
+        #[cfg(debug_assertions)]
+        {
+            let uart = Uart::get();
+            uart.output()
+                .send_slice("[UT] = ")
+                .send_number(ut)
+                .send_slice_ln("");
+        }
+        self.temp_calc(ut)
+    }
+    pub fn read_pressure(&mut self, oss: u8) -> PressureConversion {
+        self.write_to_reg(0xF4, 0x34);
+        delay_ms(5);
+        let up = self.read_reg_from(0xF6);
+        #[cfg(debug_assertions)]
+        {
+            let uart = Uart::get();
+            uart.output()
+                .send_slice("[UP] = ")
+                .send_number(up)
+                .send_slice_ln("");
+        }
+        PressureConversion::new(self.pressure_calc(up, oss))
+    }
+}
+pub struct PressureConversion {
+    pascal_pressure: i32,
+}
+impl PressureConversion {
+    fn new(v: i32) -> Self {
+        Self { pascal_pressure: v }
+    }
+    pub fn to_pascal(&self) -> i32 {
+        self.pascal_pressure
+    }
+    pub fn to_mm_hg(&self) -> i32 {
+        (self.pascal_pressure * 100) / 13332
     }
 }
